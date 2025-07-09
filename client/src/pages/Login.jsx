@@ -5,7 +5,7 @@ import { useAuth } from "../api/Authcontext";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, setIsLoggedIn } = useAuth();
 
   const [form, setForm] = useState({
     email: "",
@@ -45,8 +45,10 @@ const Login = () => {
 
       // Save token in localStorage
       localStorage.setItem("token", res.token);
-
       toast.success("✅ Login Successful!");
+      // Set logged-in state
+      setIsLoggedIn(true);
+      
       setTimeout(() => {
         navigate("/");
       }, 1000);

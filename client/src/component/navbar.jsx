@@ -1,9 +1,27 @@
 import React, { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
+import { useAuth } from "../api/Authcontext"
+import { useNavigate } from "react-router-dom";
+
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const { logout, token, isLoggedIn } = useAuth()
+  
+  
+  const logoutfunction = () => {
+    const response = logout();
+    if (response) {
+      navigate("/login");
+      window.location.reload();
+      console.log("Logout successful");
+    } else {
+      console.error("Logout failed");
+    }
+    setIsOpen(false);
+  }
 
   const toggleNavbar = () => {
     setIsOpen(!isOpen);
@@ -41,12 +59,23 @@ const Navbar = () => {
           >
             Search
           </NavLink>
-          <Link to="/login" className="hover:text-blue-500">
-            Login
-          </Link>
-          <Link to="/register" className="hover:text-blue-500">
-            Sign in
-          </Link>
+          {isLoggedIn ? (
+            <button
+              onClick={logoutfunction}
+              className="bg-red-900 text-white py-2 px-4 rounded  hover:bg-red-500 transition duration-300"
+            >
+              Logout
+            </button>
+          ) : (
+            <>
+              <Link to="/login" className="hover:text-blue-500">
+                Login
+              </Link>
+              <Link to="/register" className="hover:text-blue-500 ml-4">
+                Sign up
+              </Link>
+            </>
+          )}
         </ul>
 
         {/* Hamburger Icon */}
@@ -105,24 +134,23 @@ const Navbar = () => {
                 Search
               </NavLink>
             </li>
-            <li>
-              <Link
-                to="/login"
-                onClick={toggleNavbar}
-                className="text-gray-700 block hover:text-blue-500"
+            {isLoggedIn ? (
+              <button
+                onClick={logoutfunction}
+                className="bg-red-900 text-white py-2 px-4 rounded  hover:bg-red-500 transition duration-300"
               >
-                Login
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/register"
-                onClick={toggleNavbar}
-                className="text-gray-700 block hover:text-blue-500"
-              >
-                Sign in
-              </Link>
-            </li>
+                Logout
+              </button>
+            ) : (
+              <>
+                <Link to="/login" className="hover:text-blue-500">
+                  Login
+                </Link>
+                <Link to="/register" className="hover:text-blue-500 ml-4">
+                  Sign up
+                </Link>
+              </>
+            )}
           </ul>
         </div>
       </div>

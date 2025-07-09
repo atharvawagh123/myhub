@@ -3,7 +3,7 @@ import axios from "axios";
 
 // global API URL
 const apiUrl = process.env.REACT_APP_API_URL || "http://localhost:5000/";
-export const token = localStorage.getItem("token");
+
 
 
 // ✅ Named export using ES module syntax
@@ -33,7 +33,7 @@ export const login = async (email, password) => {
       email,
       password,
     });
-
+  
     console.log("Login successful:", res.data);
     return res.data;
   } catch (error) {
@@ -44,6 +44,7 @@ export const login = async (email, password) => {
 export const logout = async () => {
   try {
     localStorage.removeItem("token");
+
     if(localStorage.getItem("token")) {
       throw new Error("Logout failed, token still exists");
     } else {
