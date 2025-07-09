@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 const Register = () => {
   const { register } = useAuth();
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
   const [form, setForm] = useState({
     name: "",
@@ -69,15 +70,24 @@ const Register = () => {
             required
           />
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={handleChange}
-            className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
-            required
-          />
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="Password"
+              value={form.password}
+              onChange={handleChange}
+              className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none pr-12"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-blue-600 hover:underline focus:outline-none"
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
+          </div>
 
           <select
             name="role"
