@@ -19,7 +19,6 @@ A full-stack **Social Media Platform** built with the **MERN Stack** (MongoDB, E
 - 🔒 Protected Routes
 - 📝 Create, Edit, Delete Posts
 - ❤️ Like / Dislike Posts
-- 💬 Comment System
 - 🔍 View User Profiles
 - 🧾 Responsive UI with TailwindCSS
 - 🔔 Toast Notifications (react-toastify)
@@ -36,7 +35,7 @@ A full-stack **Social Media Platform** built with the **MERN Stack** (MongoDB, E
 ## 📁 Folder Structure
 
 ```
-/social-media-app
+/myhub
 ├── client        # React Frontend
 │   ├── src
 │   ├── public
