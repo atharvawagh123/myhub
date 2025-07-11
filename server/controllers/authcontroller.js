@@ -21,8 +21,6 @@ exports.fetchpostlike = async (req, res) => {
             console.log('Post not found');
             return res.status(404).json({ message: 'Post not found' });
         }
-
-        console.log('Post likes:', post.likes || 'No likes');
         return res.status(200).json({ likes: post.likes || [] });
         
     } catch (err) {
@@ -48,8 +46,11 @@ exports.fetchallpost = async (req, res) => {
 // comment on post
 exports.likepost = async (req, res) => {
     try {
-        const { postId } = req.body;
-        const currentUser = req.user || 'test123434@example.com';
+        const { postId } = req.body;     
+        const currentUser = await User.findById(req.user._id);
+        if (!currentUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
 
         const postImage = await Post.findOne({ public_id: postId });
         
@@ -90,6 +91,57 @@ exports.likepost = async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 };
+
+// unlike post
+exports.unlikepost = async (req, res) => {
+    try {
+      const { postId } = req.body;
+      const currentUser = await User.findById(req.user._id);
+      if (!currentUser) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      const postImage = await Post.findOne({ public_id: postId });
+      if (!postImage) {
+        return res.status(404).json({ message: 'Post not found' });
+      }
+  
+      const userwhopost = await User.findOne({ email: postImage.email });
+      if (!userwhopost) {
+        return res.status(404).json({ message: 'Post owner not found' });
+      }
+  
+      // Remove from userwhopost.images.likes
+      if (userwhopost.images && Array.isArray(userwhopost.images)) {
+        for (let i = 0; i < userwhopost.images.length; i++) {
+          if (userwhopost.images[i].public_id === postId) {
+            const likeIndex = userwhopost.images[i].likes.indexOf(currentUser._id);
+            if (likeIndex !== -1) {
+              userwhopost.images[i].likes.splice(likeIndex, 1);
+              await userwhopost.save();
+            } else {
+              return res.status(400).json({ message: 'Post not yet liked' });
+            }
+          }
+        }
+      }
+  
+      // Remove from postImage.likes
+      const likeIndex = postImage.likes.indexOf(currentUser._id);
+      if (likeIndex !== -1) {
+        postImage.likes.splice(likeIndex, 1);
+        await postImage.save();
+      } else {
+        return res.status(400).json({ message: 'Post not yet liked' });
+      }
+  
+      res.status(200).json({ message: 'Post unliked successfully' });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: err.message });
+    }
+  };
+  
 
 // post image user
 exports.postImage = async (req, res) => {

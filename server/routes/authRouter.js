@@ -1,22 +1,23 @@
 const express = require('express');
 const router = express.Router();
-const { 
-    register, 
-    login, 
-    logout, 
-    followUser, 
-    unfollowUser, 
-    postImage,
-    setprofile,
-    likepost,
-    fetchallpost,
-    getUser,
-    fetchpostlike,
-    updateUser,
-    searchUser,
-    deletePost,
-    assignRoomId
-} = require('../controllers/authcontroller');
+const {
+  register,
+  login,
+  logout,
+  followUser,
+  unfollowUser,
+  postImage,
+  setprofile,
+  likepost,
+  fetchallpost,
+  getUser,
+  fetchpostlike,
+  updateUser,
+  searchUser,
+  deletePost,
+  assignRoomId,
+  unlikepost,
+} = require("../controllers/authcontroller");
 const auth = require('../middleware/auth');
 const { upload } = require('../config/cloudinary');
 
@@ -38,7 +39,10 @@ router.post('/postImage', auth, upload.single('photo'), postImage);
 router.post('/setProfilePhoto', auth, upload.single('photo'), setprofile);
 
 // like the post 
-router.post('/like',auth, likepost);
+router.post('/like', auth, likepost);
+
+// unlike the post
+router.post("/unlike", auth, unlikepost);
 
 //fetch user
 router.get('/postlike/:id', fetchpostlike);
