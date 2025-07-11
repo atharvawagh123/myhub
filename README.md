@@ -57,7 +57,7 @@ A full-stack **Social Media Platform** built with the **MERN Stack** (MongoDB, E
 
 ```bash
 git clone https://github.com/atharvawagh123/myhub
-cd social-media-app
+cd myhub
 ```
 
 ### 2. Setup Backend
