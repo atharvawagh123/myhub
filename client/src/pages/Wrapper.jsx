@@ -1,5 +1,6 @@
 import Navbar from '../component/navbar'
 import Footer from '../component/Footer'
+import Feed from './Feed'
 
 
 
@@ -8,7 +9,7 @@ const Wrapper = () => {
   return (
     <>
     <Navbar />
-      <h1>Wrapper Page</h1>
+   <Feed />
     <Footer />
     </>
   )

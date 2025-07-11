@@ -41,7 +41,7 @@ router.post('/setProfilePhoto', auth, upload.single('photo'), setprofile);
 router.post('/like',auth, likepost);
 
 //fetch user
-router.post('/postlike',fetchpostlike)
+router.get('/postlike/:id', fetchpostlike);
 
 //fetch all posts
 router.get('/posts', fetchallpost);

@@ -11,10 +11,11 @@ require('dotenv').config();
 // fetch post like count
 exports.fetchpostlike = async (req, res) => {
     try {
-        const { postId } = req.body;
-        console.log(postId);
+      
+        const { id } = req.params;
         
-        const post = await Post.findOne({ public_id: postId });
+        
+        const post = await Post.findOne({ _id: id });
         
         if (!post) {
             console.log('Post not found');
