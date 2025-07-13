@@ -281,19 +281,16 @@ exports.login = async (req, res) => {
 exports.getUser = async (req, res) => {
     console.log('Hit /getuser route'); // debug line
     try {
-        const { email, userid } = req.body;
+        const {  id } = req.params;
         // Find user by either email or userid
         const user = await User.findOne({
             $or: [
-                { email: email },
-                { _id: userid }
+                { _id: id }
             ]
         });
-
+        
         console.log("bhai use dekehe le aarahhe kya  ",user);
         if (!user) return res.status(404).json({ message: 'No user found' });
-
-        console.log(user);
 
         // Return found user
         return res.json(user);

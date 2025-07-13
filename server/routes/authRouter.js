@@ -26,7 +26,7 @@ const { upload } = require('../config/cloudinary');
 router.post('/register', register);
 
 // getuser
-router.post('/getuser', getUser);
+router.get('/getuser/:id', getUser);
 // Login route
 router.post('/login', login);
 // Follow routes
