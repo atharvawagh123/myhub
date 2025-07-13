@@ -26,7 +26,6 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({storage});
 
-console.log("cloudinary config is working ");
-console.log(cloudinary.config());
+
 
 module.exports = {cloudinary, storage, upload};
