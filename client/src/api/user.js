@@ -39,3 +39,14 @@ export const unfollowuser = async (id) => {
         console.log(error);
     }
 }
+
+//is following
+export const isfollowing = async (id) => {
+    try {
+        const response = await authAxios.get(`/api/auth/isfollowing/${id}`);
+        return response.data
+    }
+    catch (error) {
+        console.log(error);
+    }
+}

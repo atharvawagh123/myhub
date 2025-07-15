@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { likepost, unlikepost, fetchlikes } from "../api/post";
-import { getuser, followuser, unfollowuser } from "../api/user";
+import { getuser, followuser, unfollowuser, isfollowing } from "../api/user";
 import { toast } from "react-toastify";
 import { useAuth } from "../api/Authcontext";
 
@@ -8,7 +8,7 @@ const Post = ({ _id, caption, location, url, public_id, userid }) => {
   const { user, token } = useAuth();
   const [liked, setLiked] = useState(0);
   const [currentuserliked, setcurrentuserliked] = useState(false);
-  const [currentuserfollow, setcurrentuserfollow] = useState();
+  const [currentuserfollow, setcurrentuserfollow] = useState(false);
   const [postowner, setpostowner] = useState({
     profile: "",
     name: "",
@@ -20,17 +20,26 @@ const Post = ({ _id, caption, location, url, public_id, userid }) => {
   useEffect(() => {
     fetchdata();
     getpostowner();
+    isfollow();
   }, []);
 
+  const isfollow = async () => {
+    try {
+      const response = await isfollowing(userid);
+      if (response.isfollowing) {
+        setcurrentuserfollow(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const followhandle = async () => {
     try {
       const response = await followuser(userid);
       if (response.success) {
         toast.success("Followed successfully");
-        getpostowner();  
-      } else {
-        toast.error(response.message);
+        isfollow();
       }
     } catch (error) {
       toast.error(error);
@@ -43,9 +52,7 @@ const Post = ({ _id, caption, location, url, public_id, userid }) => {
       const response = await unfollowuser(userid);
       if (response.success) {
         toast.success("Unfollowed successfully");
-        getpostowner();
-      }else{
-        toast.error(response.message);
+        isfollow();
       }
     } catch (error) {
       console.error(error);
@@ -126,7 +133,7 @@ const Post = ({ _id, caption, location, url, public_id, userid }) => {
           </div>
         </div>
 
-        {currentuserfollow  ? (
+        {currentuserfollow ? (
           <button
             onClick={unfollowhandle} // ✅ Correct
             className="text-xs px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition"

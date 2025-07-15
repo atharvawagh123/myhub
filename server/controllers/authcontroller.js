@@ -342,6 +342,28 @@ exports.followUser = async (req, res) => {
     }
 };
 
+//is following user controller
+exports.isFollowing = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await User.findById(req.user._id);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        const userToCheck = await User.findById(id);
+        if (!userToCheck) {
+            return res.status(404).json({ message: "User to check not found" });
+        }
+        // Check if user is following the target user
+        const isFollowing = user.following.includes(userToCheck._id);
+
+        res.json({ isFollowing,currentUser:user.name,userToCheck:userToCheck.name,success:true });
+      
+    } catch (err) {
+        res.status(500).json({ message: err.message,success:false });
+    }
+};
+
 // Unfollow user controller
 exports.unfollowUser = async (req, res) => {
     try {

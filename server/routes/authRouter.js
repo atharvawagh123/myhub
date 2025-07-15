@@ -17,6 +17,7 @@ const {
   deletePost,
   assignRoomId,
   unlikepost,
+  isFollowing,
 } = require("../controllers/authcontroller");
 const auth = require('../middleware/auth');
 const { upload } = require('../config/cloudinary');
@@ -31,6 +32,9 @@ router.get('/getuser/:id', getUser);
 router.post('/login', login);
 // Follow routes
 router.post('/follow', auth, followUser);
+//is following
+router.get('/isfollowing/:id', auth, isFollowing);
+
 router.delete('/unfollow/:id', auth, unfollowUser);
 // Logout route
 router.post('/logout', auth, logout);
