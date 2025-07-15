@@ -279,7 +279,6 @@ exports.login = async (req, res) => {
 
 // Get user by name controller
 exports.getUser = async (req, res) => {
-    console.log('Hit /getuser route'); // debug line
     try {
         const {  id } = req.params;
         // Find user by either email or userid
@@ -288,11 +287,7 @@ exports.getUser = async (req, res) => {
                 { _id: id }
             ]
         });
-        
-        console.log("bhai use dekehe le aarahhe kya  ",user);
         if (!user) return res.status(404).json({ message: 'No user found' });
-
-        // Return found user
         return res.json(user);
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -303,7 +298,7 @@ exports.getUser = async (req, res) => {
 exports.followUser = async (req, res) => {
     try {
         // Clean the ID by removing any whitespace or newline characters
-        const cleanUserId = req.params.id.trim();
+        const cleanUserId = req.body.id.trim();
 
         // Log user IDs for debugging
         console.log("User to follow:", cleanUserId);
@@ -312,6 +307,7 @@ exports.followUser = async (req, res) => {
         // Find both users in database
         const userToFollow = await User.findById(cleanUserId);
         const currentUser = await User.findById(req.user._id);
+   
 
         // Validate both users exist
         if (!userToFollow || !currentUser) {

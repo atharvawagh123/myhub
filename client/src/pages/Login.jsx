@@ -45,6 +45,7 @@ const Login = () => {
 
       // Save token in localStorage
       localStorage.setItem("token", res.token);
+      localStorage.setItem("user", JSON.stringify(res.user));
       toast.success("✅ Login Successful!");
       // Set logged-in state
       setIsLoggedIn(true);

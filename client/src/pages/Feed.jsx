@@ -1,10 +1,8 @@
-// Feed.js
 import React, { useEffect, useState } from "react";
 import { fetchPosts } from "../api/post";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination } from "swiper/modules";
+import { Pagination } from "swiper/modules";
 import "swiper/css";
-import "swiper/css/navigation";
 import "swiper/css/pagination";
 import Post from "../component/Post";
 
@@ -24,29 +22,37 @@ const Feed = () => {
   }, []);
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
-      <Swiper
-        modules={[Navigation, Pagination]}
-        navigation
-        pagination={{ clickable: true }}
-        spaceBetween={30}
-        slidesPerView={1}
-      >
-        {Array.isArray(posts) &&
-          posts.map((post) => (
-            <SwiperSlide key={post._id}>
-              <Post
-                _id={post._id}
-                email={post.email}
-                caption={post.caption}
-                location={post.location}
-                url={post.url}
-                public_id={post.public_id}
-                likes={post.likes}
-              />
-            </SwiperSlide>
-          ))}
-      </Swiper>
+    <div className="w-full flex gap-5">
+      {/* Left Swiper Section */}
+      <div className="w-1/2 max-w-4xl mx-auto h-full">
+        <Swiper
+          pagination={{ clickable: true }}
+          spaceBetween={30}
+          slidesPerView={2}
+          
+        >
+          {Array.isArray(posts) &&
+            posts.map((post) => (
+              <SwiperSlide key={post._id}>
+                <Post
+                  _id={post._id}
+                  email={post.email}
+                  caption={post.caption}
+                  location={post.location}
+                  url={post.url}
+                  public_id={post.public_id}
+                  likes={post.likes}
+                  userid={post.userid}
+                />
+              </SwiperSlide>
+            ))}
+        </Swiper>
+      </div>
+
+      {/* Right Section */}
+      <div className="w-1/2 max-w-4xl mx-auto bg-red-600">
+        <div className="w-full bg-slate-400 h-full"></div>
+      </div>
     </div>
   );
 };

@@ -30,8 +30,8 @@ router.get('/getuser/:id', getUser);
 // Login route
 router.post('/login', login);
 // Follow routes
-router.post('/follow/:id', auth, followUser);
-router.post('/unfollow/:id', auth, unfollowUser);
+router.post('/follow', auth, followUser);
+router.delete('/unfollow/:id', auth, unfollowUser);
 // Logout route
 router.post('/logout', auth, logout);
 // Image routes
