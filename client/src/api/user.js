@@ -50,3 +50,23 @@ export const isfollowing = async (id) => {
         console.log(error);
     }
 }
+
+//info of user login
+export const getuserinfo = async (id) => {
+  try {
+    const response = await authAxios.get(`/api/auth/getuser/${id}`);
+    return response.data
+  }catch (error) {
+    console.log(error);
+  }
+}
+
+//update user 
+export const updateuser = async (data) => {
+  try {
+    const response = await authAxios.put("/api/auth/updateuser",data);
+    return response.data
+  }catch (error) {
+    console.log(error);
+  }
+}
