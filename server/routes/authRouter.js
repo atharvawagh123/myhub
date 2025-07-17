@@ -27,7 +27,7 @@ const { upload } = require('../config/cloudinary');
 router.post('/register', register);
 
 // getuser
-router.get('/getuser/:id', getUser);
+router.get('/getuser/:id',auth, getUser);
 // Login route
 router.post('/login', login);
 // Follow routes
@@ -58,7 +58,7 @@ router.get('/posts', fetchallpost);
 router.delete('/deletepost',auth, deletePost);
 
 //updateuser
-router.post('/updateuser', auth , upload.single('photo') , updateUser);
+router.put('/updateuser', auth , upload.single('photo') , updateUser);
 
 // user  ko input ke baad search karne ke liye
 router.post('/search', searchUser);

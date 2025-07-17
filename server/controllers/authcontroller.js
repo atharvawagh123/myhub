@@ -435,7 +435,7 @@ exports.setprofile= async(req,res)=>{
 exports.updateUser = async (req, res) => {
     try {
         console.log(req.body);
-        console.log("user ki profile filw photo", req.file?.path);
+        console.log("user ki profile file photo", req.file?.path);
         // Find user by ID
         const user = await User.findById(req.user._id); 
         if(!user){
