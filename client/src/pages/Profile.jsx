@@ -71,7 +71,6 @@ const Profile = () => {
     }
   };
 
-  
   return (
     <div>
       <div className="max-w-4xl mx-auto p-4">
@@ -87,37 +86,44 @@ const Profile = () => {
 
           {/* User Info */}
           <div className="flex-1 w-full space-y-3 text-center md:text-left">
+            <div className="flex gap-4 text-sm sm:text-base font-medium text-gray-800">
+              <div>
+                <span className="font-semibold">
+                  {currentuser.images?.length || 0}
+                </span>{" "}
+                posts
+              </div>
+              <div>
+                <span className="font-semibold">{currentuser.followers?.length}</span> followers
+              </div>
+              <div>
+                <span className="font-semibold">{currentuser.following?.length}</span> following
+              </div>
+            </div>
+
             {/* Top Row */}
             <h2 className="text-xl md:text-2xl font-semibold">
               {currentuser.name}
             </h2>
-            {/* Email and Bio */}
-            <p className="text-gray-700 text-sm">{currentuser.email}</p>
             <p className="text-gray-600">{currentuser.bio}</p>
-            {/* Role */}
-            <span className="inline-block bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded">
+            <span className="inline-block bg-gray-300 text-gray-800 text-xs px-2 py-1 rounded">
               {currentuser.role}
             </span>
           </div>
           <div className="flex gap-2">
-          <button
-            onClick={() => dialog.current.showModal()}
-            className="bg-blue-600 text-white px-4 py-1 rounded-md hover:bg-blue-700 transition"
-          >
-            Update Profile
-          </button>
-          <button
-            onClick={() => dialog2.current.showModal()}
-            className="bg-blue-600 text-white px-4 py-1 rounded-md hover:bg-blue-700 transition"
-          >
-            post image
+            <button
+              onClick={() => dialog.current.showModal()}
+              className="bg-blue-600 text-white px-4 py-1 rounded-md hover:bg-blue-700 transition"
+            >
+              Update Profile
+            </button>
+            <button
+              onClick={() => dialog2.current.showModal()}
+              className="bg-blue-600 text-white px-4 py-1 rounded-md hover:bg-blue-700 transition"
+            >
+              post image
             </button>
           </div>
-        </div>
-        <div className="flex gap-2">
-          <button className="bg-blue-600 text-white px-4 py-1 rounded-md hover:bg-blue-700 transition">
-            follow
-          </button>
         </div>
       </div>
 

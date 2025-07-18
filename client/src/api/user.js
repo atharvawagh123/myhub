@@ -21,6 +21,8 @@ export const getadmin = async () => {
     return { message: "error while fetching", success: false };
   }
 }
+
+
 //follow account
 export const followuser = async (id) => {
   try {
