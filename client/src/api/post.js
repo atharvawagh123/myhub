@@ -48,3 +48,27 @@ export const unlikepost = async (postId) => {
     throw error;
   }
 };
+
+//post image
+export const postImage = async (data) => {
+  try {
+    const response = await authAxios.post("/api/auth/postImage", data);
+    return response.data;
+  } catch (error) {
+    console.error("Error posting image:", error);
+    throw error;
+  }
+};
+
+//delete post
+export const deletepost = async (public_id) => {
+  try {
+    const response = await authAxios.delete("/api/auth/deletepost", {
+      data: { public_id },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting post:", error);
+    throw error;
+  }
+};

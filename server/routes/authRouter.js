@@ -18,6 +18,7 @@ const {
   assignRoomId,
   unlikepost,
   isFollowing,
+  getUserInfo,
 } = require("../controllers/authcontroller");
 const auth = require('../middleware/auth');
 const { upload } = require('../config/cloudinary');
@@ -27,7 +28,13 @@ const { upload } = require('../config/cloudinary');
 router.post('/register', register);
 
 // getuser
-router.get('/getuser/:id',auth, getUser);
+router.get('/getuser/:id', auth, getUser);
+
+//get info of admin user
+router.get("/getadmin", auth, getUserInfo);
+
+
+
 // Login route
 router.post('/login', login);
 // Follow routes

@@ -1,0 +1,277 @@
+import { useAuth } from "../api/Authcontext";
+import { useEffect, useState, useRef } from "react";
+import { getadmin, updateuser } from "../api/user";
+import { postImage } from "../api/post";
+import { toast } from "react-toastify";
+import Adminpost from "../component/Adminpost";
+
+const Profile = () => {
+  const { user } = useAuth();
+  const dialog = useRef();
+  const dialog2 = useRef();
+  const [currentuser, setcurrentuser] = useState("");
+  const [userdata, setuserdata] = useState({
+    name: "",
+    bio: "",
+  });
+  const [profile, setprofile] = useState(null);
+  const [posts, setposts] = useState(null);
+
+  const [postinfo, setpostinfo] = useState({
+    caption: "",
+    location: "",
+  });
+
+  useEffect(() => {
+    getinfo();
+  }, []);
+
+  const postdelete = () => {
+    getinfo();
+  };
+
+  const getinfo = async () => {
+    const response = await getadmin();
+    setcurrentuser(response);
+  };
+
+  const update = async (e) => {
+    e.preventDefault();
+    if (!userdata.name || !userdata.bio) {
+      toast.error("❌ Please fill in all fields");
+      return;
+    }
+    const formData = new FormData();
+    formData.append("name", userdata.name);
+    formData.append("photo", profile);
+    formData.append("bio", userdata.bio);
+    const response = await updateuser(formData);
+    if (response) {
+      getinfo();
+      toast.success(response.message);
+      dialog.current.close();
+    }
+  };
+
+  const postimage = async (e) => {
+    e.preventDefault();
+    if (!postinfo.caption || !postinfo.location) {
+      toast.error("❌ Please fill in all fields");
+      return;
+    }
+    const formData = new FormData();
+    formData.append("caption", postinfo.caption);
+    formData.append("location", postinfo.location);
+    formData.append("photo", posts);
+    const response = await postImage(formData);
+    if (response.success) {
+      getinfo();
+      toast.success(response.message);
+      dialog2.current.close();
+    }
+  };
+
+  
+  return (
+    <div>
+      <div className="max-w-4xl mx-auto p-4">
+        <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
+          {/* Profile Picture */}
+          <div className="flex-shrink-0">
+            <img
+              src={currentuser.profilePicture}
+              alt="Profile"
+              className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-2 border-gray-300"
+            />
+          </div>
+
+          {/* User Info */}
+          <div className="flex-1 w-full space-y-3 text-center md:text-left">
+            {/* Top Row */}
+            <h2 className="text-xl md:text-2xl font-semibold">
+              {currentuser.name}
+            </h2>
+            {/* Email and Bio */}
+            <p className="text-gray-700 text-sm">{currentuser.email}</p>
+            <p className="text-gray-600">{currentuser.bio}</p>
+            {/* Role */}
+            <span className="inline-block bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded">
+              {currentuser.role}
+            </span>
+          </div>
+          <div className="flex gap-2">
+          <button
+            onClick={() => dialog.current.showModal()}
+            className="bg-blue-600 text-white px-4 py-1 rounded-md hover:bg-blue-700 transition"
+          >
+            Update Profile
+          </button>
+          <button
+            onClick={() => dialog2.current.showModal()}
+            className="bg-blue-600 text-white px-4 py-1 rounded-md hover:bg-blue-700 transition"
+          >
+            post image
+            </button>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <button className="bg-blue-600 text-white px-4 py-1 rounded-md hover:bg-blue-700 transition">
+            follow
+          </button>
+        </div>
+      </div>
+
+      {/* post section */}
+      <div className="grid grid-cols-3 gap-4 mt-5">
+        {currentuser?.images?.length > 0 &&
+          currentuser.images.map((post) => (
+            <Adminpost key={post._id} post={post} postdeleted={postdelete} />
+          ))}
+      </div>
+
+      {/* post image */}
+      <dialog
+        ref={dialog2}
+        className="rounded-xl max-w-md w-full p-6 shadow-lg border border-gray-300 backdrop:bg-black/50"
+      >
+        <form onSubmit={postimage} className="space-y-4">
+          <h2 className="text-2xl font-semibold text-center mb-4 text-gray-800">
+            Create a Post
+          </h2>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Caption
+            </label>
+            <textarea
+              name="caption"
+              value={postinfo.caption || ""}
+              onChange={(e) =>
+                setpostinfo({ ...postinfo, caption: e.target.value })
+              }
+              rows="3"
+              className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
+              placeholder="What's on your mind?"
+            ></textarea>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Location
+            </label>
+            <input
+              type="text"
+              name="location"
+              value={postinfo.location || ""}
+              onChange={(e) =>
+                setpostinfo({ ...postinfo, location: e.target.value })
+              }
+              className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
+              placeholder="Add location"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Image
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setposts(e.target.files[0])}
+              className="mt-1 block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-blue-600 file:text-white hover:file:bg-blue-700"
+            />
+          </div>
+
+          <div className="text-center">
+            <button
+              type="submit"
+              className="inline-block w-full rounded-md bg-blue-600 px-4 py-2 text-white font-medium hover:bg-blue-700 transition duration-200"
+            >
+              Post
+            </button>
+            <button onClick={() => dialog2.current.close()}>close</button>
+          </div>
+        </form>
+      </dialog>
+
+      {/* Update Profile Dialog */}
+      <dialog
+        ref={dialog}
+        className="w-full max-w-md p-6 rounded-xl bg-white shadow-lg backdrop:backdrop-blur-md"
+      >
+        <form
+          onSubmit={update}
+          className="flex flex-col gap-4"
+          encType="multipart/form-data"
+        >
+          <h2 className="text-2xl font-semibold text-gray-700">
+            Update Profile
+          </h2>
+
+          <div className="flex flex-col">
+            <label
+              htmlFor="name"
+              className="mb-1 text-sm font-medium text-gray-600"
+            >
+              Name
+            </label>
+            <input
+              type="text"
+              id="name"
+              value={userdata.name}
+              onChange={(e) =>
+                setuserdata({ ...userdata, name: e.target.value })
+              }
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter your name"
+            />
+          </div>
+
+          <div className="flex flex-col">
+            <label
+              htmlFor="profileimage"
+              className="mb-1 text-sm font-medium text-gray-600"
+            >
+              Profile Image
+            </label>
+            <input
+              type="file"
+              id="profileimage"
+              className="file-input file-input-bordered file-input-sm w-full max-w-xs"
+              onChange={(e) => setprofile(e.target.files[0])}
+            />
+          </div>
+
+          <div className="flex flex-col">
+            <label
+              htmlFor="bio"
+              className="mb-1 text-sm font-medium text-gray-600"
+            >
+              Bio
+            </label>
+            <input
+              type="text"
+              id="bio"
+              value={userdata.bio}
+              onChange={(e) =>
+                setuserdata({ ...userdata, bio: e.target.value })
+              }
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter your bio"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
+          >
+            Update
+          </button>
+        </form>
+      </dialog>
+    </div>
+  );
+};
+
+export default Profile;

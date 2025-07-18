@@ -11,6 +11,16 @@ export const getuser = async (id)=>{
     }
 }
 
+//get info of admin
+export const getadmin = async () => {
+  try {
+    const response = await authAxios.get("/api/auth/getadmin");
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    return { message: "error while fetching", success: false };
+  }
+}
 //follow account
 export const followuser = async (id) => {
   try {
@@ -70,3 +80,4 @@ export const updateuser = async (data) => {
     console.log(error);
   }
 }
+

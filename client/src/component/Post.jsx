@@ -21,7 +21,7 @@ const Post = ({ _id, caption, location, url, public_id, userid }) => {
     fetchdata();
     getpostowner();
     isfollow();
-  }, []);
+  }, [currentuserfollow]);
 
   const isfollow = async () => {
     try {

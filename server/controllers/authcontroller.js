@@ -13,8 +13,6 @@ exports.fetchpostlike = async (req, res) => {
     try {
       
         const { id } = req.params;
-        
-        
         const post = await Post.findOne({ _id: id });
         
         if (!post) {
@@ -145,9 +143,9 @@ exports.unlikepost = async (req, res) => {
 
 // post image user
 exports.postImage = async (req, res) => {
-    console.log(req.body);
+ 
     const user = await User.findById(req.user._id);
-    console.log(user.email);
+ 
     try {
         // Check if a file was uploaded
         if (!req.file) {
@@ -293,6 +291,17 @@ exports.getUser = async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 };
+
+//get loggin user info
+exports.getUserInfo = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        if (!user) return res.status(404).json({ message: 'No user found' });
+        return res.json(user);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+}
 
 // Follow user controller
 exports.followUser = async (req, res) => {
@@ -473,8 +482,9 @@ exports.searchUser = async (req, res) => {
 
 //delete post using public_id
 exports.deletePost = async (req, res) => {
-   try{
-    const {public_id}=req.body;
+    try {
+       console.log(req.body.public_id);
+    const {public_id} = req.body;
     console.log(public_id);
   
     const post = await Post.findOne({public_id : public_id});
