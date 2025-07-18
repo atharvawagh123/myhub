@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { useAuth } from "../api/Authcontext";
 import { likepost, unlikepost, fetchlikes } from "../api/post";
 
-function Adminpost({ post, postdeleted }) {
+function Adminpost({ post, postdeleted ,checklike}) {
   const { user, token } = useAuth();
   const [open, setOpen] = useState(false);
   const [currentuserliked, setcurrentuserliked] = useState(false);
@@ -43,6 +43,7 @@ function Adminpost({ post, postdeleted }) {
         toast.success(response.message);
         // fetchdata();
         fetchinglike();
+        checklike();
       } else {
         toast.error(response.message);
       }
@@ -58,6 +59,7 @@ function Adminpost({ post, postdeleted }) {
       toast.success(response.message);
       // fetchdata();
       fetchinglike();
+      checklike();
     } else {
       toast.error(response.message);
     }

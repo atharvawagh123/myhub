@@ -83,3 +83,11 @@ export const updateuser = async (data) => {
   }
 }
 
+export const searchuser = async (data) => {
+  try {
+    const response = await authAxios.get(`/api/auth/search?usertext=${data}`);
+    return response.data
+  }catch (error) {
+    console.log(error);
+  }
+}

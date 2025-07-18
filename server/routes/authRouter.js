@@ -68,7 +68,7 @@ router.delete('/deletepost',auth, deletePost);
 router.put('/updateuser', auth , upload.single('photo') , updateUser);
 
 // user  ko input ke baad search karne ke liye
-router.post('/search', searchUser);
+router.get('/search', searchUser);
 
 // Room fo chatting 
 router.post('/room',assignRoomId)

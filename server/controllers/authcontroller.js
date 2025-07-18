@@ -14,7 +14,7 @@ exports.fetchpostlike = async (req, res) => {
       
         const { id } = req.params;
         const post = await Post.findOne({ _id: id });
-        
+
         if (!post) {
             console.log('Post not found');
             return res.status(404).json({ message: 'Post not found' });
@@ -465,20 +465,21 @@ exports.updateUser = async (req, res) => {
 }
 
 // user ko input ke anusar fetch karna hai
+// Controller function
 exports.searchUser = async (req, res) => {
-    console.log(req.body);
+    console.log(req.query); // Now using query params instead of body
     try {
-       const {usertext} = req.body;
-       const user = await User.find({
-        name: { $regex: usertext, $options: 'i' } // 'i' = case insensitive
-    });
-       console.log(user);
-       res.status(200).json({user}); 
-    }catch(err){
+        const usertext = req.query.usertext;
+        const users = await User.find({
+            name: { $regex: usertext, $options: 'i' }
+        });
+        console.log(users);
+        res.status(200).json({ users });
+    } catch (err) {
         res.status(500).json({ message: err.message });
     }
-   
-}
+};
+
 
 //delete post using public_id
 exports.deletePost = async (req, res) => {

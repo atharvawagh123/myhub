@@ -30,6 +30,10 @@ const Profile = () => {
     getinfo();
   };
 
+  const checkliked = () => {
+    getinfo();
+  };
+
   const getinfo = async () => {
     const response = await getadmin();
     setcurrentuser(response);
@@ -86,6 +90,8 @@ const Profile = () => {
 
           {/* User Info */}
           <div className="flex-1 w-full space-y-3 text-center md:text-left">
+
+            {/* post , followers , following */}
             <div className="flex gap-4 text-sm sm:text-base font-medium text-gray-800">
               <div>
                 <span className="font-semibold">
@@ -110,6 +116,9 @@ const Profile = () => {
               {currentuser.role}
             </span>
           </div>
+
+          {/* Update Profile Button */}
+          {/* and post image */}
           <div className="flex gap-2">
             <button
               onClick={() => dialog.current.showModal()}
@@ -131,7 +140,7 @@ const Profile = () => {
       <div className="grid grid-cols-3 gap-4 mt-5">
         {currentuser?.images?.length > 0 &&
           currentuser.images.map((post) => (
-            <Adminpost key={post._id} post={post} postdeleted={postdelete} />
+            <Adminpost key={post._id} post={post} postdeleted={postdelete}  checklike={checkliked} />
           ))}
       </div>
 
