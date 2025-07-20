@@ -163,6 +163,7 @@ exports.postImage = async (req, res) => {
             caption: req.body.caption,
             location: req.body.location, 
             public_id: req.file.filename, // or generate your own ID
+            user: user._id,
             likes: [] // Initialize empty likes array
         });
 
@@ -285,6 +286,7 @@ exports.getUser = async (req, res) => {
                 { _id: id }
             ]
         });
+        console.log(user);
         if (!user) return res.status(404).json({ message: 'No user found' });
         return res.json(user);
     } catch (err) {

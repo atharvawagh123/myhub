@@ -44,7 +44,11 @@ const userSchema = new mongoose.Schema({
         likes: [{ 
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'User' 
-        }],       
+        }],  
+        userid: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'  // 👈 user se relation ban gaya
+          },
     }],
     roomIDs: [String] 
 }

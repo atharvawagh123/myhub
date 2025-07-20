@@ -1,6 +1,11 @@
-import React from "react";
+import React,{useEffect} from "react";
+import Post from "./Post";
 
 const Usercard = ({ user }) => {
+
+  useEffect(() => {
+    console.log(user.images);
+  }, []);
   return (
     <div className="max-w-2xl mx-auto bg-white rounded-xl shadow p-4 sm:p-6 md:p-8">
       {/* Profile header */}
@@ -36,12 +41,14 @@ const Usercard = ({ user }) => {
       {/* Image grid */}
       <div className="grid grid-cols-3 gap-2 sm:gap-4">
         {(user.images || []).map((img, idx) => (
-          <img
-            key={idx}
-            src={img.url || img}
-            alt=""
-            className="w-full aspect-square object-cover rounded-lg"
-          />
+          img && (
+            <img
+              key={idx}
+              src={img.url}
+              alt={`Image ${idx}`}
+              className="w-full h-full object-cover rounded-lg"
+            />
+          )
         ))}
       </div>
     </div>
