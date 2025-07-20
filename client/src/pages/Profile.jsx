@@ -129,7 +129,7 @@ const Profile = () => {
 
       {/* Posts Gallery */}
       <div className="max-w-4xl mx-auto mt-5 px-2">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-auto sm:gap-4">
           {currentuser?.images?.length > 0 &&
             currentuser.images.map((post) => (
               <Adminpost

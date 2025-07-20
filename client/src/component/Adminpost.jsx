@@ -94,8 +94,8 @@ function Adminpost({ post, postdeleted, checklike }) {
     <>
       <div
         key={post._id}
-        onClick={() => setOpen(true)}
-        className="cursor-pointer hover:opacity-80 transition"
+          onClick={() => setOpen(true)}    
+        className="cursor-pointer w-full sm:w-1/2  hover:opacity-80 transition"
       >
         <img
           src={post.url}
