@@ -189,6 +189,8 @@ exports.postImage = async (req, res) => {
     }
 };
 
+
+
 // User registration controller
 exports.register = async(req,res)=>{
     // Log request details for debugging

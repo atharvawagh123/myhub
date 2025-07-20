@@ -114,11 +114,12 @@ const Post = ({ _id, caption, location, url, public_id, userid }) => {
   };
 
   return (
-    <div className="flex flex-col items-start justify-start p-4 border rounded-2xl shadow-md m-4 bg-white max-w-md w-full">
-      <div className="flex items-center justify-between gap-20 mb-2">
-        {/* Left: Profile image and user info */}
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200">
+    <div className="flex flex-col items-start justify-start p-2 xs:p-3 sm:p-4 border rounded-2xl shadow-md mx-1 my-2 sm:m-4 bg-white max-w-full sm:max-w-md w-full">
+      {/* Header: Profile + Follow/Unfollow */}
+      <div className="flex xs:flex-row items-center xs:items-center justify-between w-full gap-3 xs:gap-8 mb-2">
+        {/* Left: Profile + Info */}
+        <div className="flex items-center gap-2 xs:gap-3">
+          <div className="w-9 h-9 xs:w-10 xs:h-10 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
             <img
               src={postowner.profile || "/image.png"}
               alt="Profile"
@@ -126,56 +127,58 @@ const Post = ({ _id, caption, location, url, public_id, userid }) => {
             />
           </div>
           <div className="flex flex-col">
-            <strong className="text-blue-800 text-sm font-medium">
+            <strong className="text-blue-800 text-xs xs:text-sm font-medium">
               {postowner.name}
             </strong>
-            <p className="text-gray-600 text-xs">{location}</p>
+            <p className="text-gray-600 text-[10px] xs:text-xs">{location}</p>
           </div>
         </div>
-
+        {/* Right: Follow Button */}
         {currentuserfollow ? (
           <button
-            onClick={unfollowhandle} // ✅ Correct
-            className="text-xs px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+            onClick={unfollowhandle}
+            className="text-xs xs:text-sm px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
           >
             Unfollow
           </button>
         ) : (
           <button
-            onClick={followhandle} // ✅ Correct
-            className="text-xs px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+            onClick={followhandle}
+            className="text-xs xs:text-sm px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
           >
             Follow
           </button>
         )}
       </div>
 
-      {/* Image */}
-      <div className="w-full h-[200px] overflow-hidden rounded-lg mb-3">
+      {/* Main Image */}
+      <div className="w-full rounded-lg overflow-hidden mb-3">
         <img
           src={url}
           alt={caption}
-          className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+          className="w-full h-40 xs:h-52 sm:h-60 object-cover transition-transform duration-300 hover:scale-105"
         />
       </div>
 
       {/* Caption */}
-      <p className="text-gray-700 text-base mb-4">{caption}</p>
+      <p className="text-gray-700 text-sm xs:text-base mb-3 break-words">
+        {caption}
+      </p>
 
       {/* Like Section */}
-      <div className="w-full flex items-center justify-between border-t pt-3">
-        <p className="text-sm text-gray-600">Likes: {liked}</p>
+      <div className="w-full flex flex-col xs:flex-row items-start xs:items-center justify-between border-t pt-2 gap-2">
+        <p className="text-xs xs:text-sm text-gray-600">Likes: {liked}</p>
         {currentuserliked ? (
           <button
             onClick={handleunlike}
-            className="text-green-600 hover:text-green-800 transition font-semibold"
+            className="text-green-600 hover:text-green-800 transition font-semibold text-xs xs:text-sm"
           >
             ❤️ Liked
           </button>
         ) : (
           <button
             onClick={handlelike}
-            className="text-red-600 hover:text-red-800 transition font-semibold"
+            className="text-red-600 hover:text-red-800 transition font-semibold text-xs xs:text-sm"
           >
             🤍 Like
           </button>

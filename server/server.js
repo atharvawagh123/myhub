@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const cors = require('cors');
 const dotenv = require("dotenv");
 const authRouter = require('./routes/authRouter');
+const postRouter = require('./routes/postRouter');
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/auth', authRouter);
+app.use('/api/post',postRouter);
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI)

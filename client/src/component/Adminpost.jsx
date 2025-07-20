@@ -16,6 +16,7 @@ function Adminpost({ post, postdeleted, checklike }) {
 
   // Setup likes info
   useEffect(() => {
+    
     setLiked(post.likes.length);
     setCurrentUserLiked(post.likes.includes(user.id));
   }, [post, user]);

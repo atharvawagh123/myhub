@@ -13,7 +13,6 @@ const Feed = () => {
     const getPosts = async () => {
       try {
         const data = await fetchPosts();
-        console.log(data.posts[0])
         setPosts(data.posts); // Make sure this returns an array
       } catch (error) {
         console.error("Error fetching posts:", error);

@@ -72,3 +72,14 @@ export const deletepost = async (public_id) => {
     throw error;
   }
 };
+
+//fetch post according to userid
+export const fetchpostofuser = async (id) => {
+  try {
+    const response = await authAxios.get(`/api/post/fetchpostofuser/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching post of user:", error);
+    throw error;
+  }
+};
