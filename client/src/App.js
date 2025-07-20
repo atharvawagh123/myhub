@@ -8,7 +8,8 @@ import "react-toastify/dist/ReactToastify.css";
 import PrivateRoute from "./ProtectRouter/PrivateRoute";
 import Feed from "./pages/Feed";
 import Profile from "./pages/Profile";
-import  Search  from "./pages/Search";
+import Search from "./pages/Search";
+import UserProfile from "./pages/User";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
           <Route index element={<Feed />} />
           <Route path="profile" element={<Profile />} />
           <Route path="search" element={<Search />} />
+          <Route path="/user/:id" element={<UserProfile />} />
         </Route>
 
         {/* Public Routes */}

@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from "react-router-dom";
 
 const Searchresult = ({ _id, profilePicture ,name,email}) => {
     return (
@@ -13,7 +14,9 @@ const Searchresult = ({ _id, profilePicture ,name,email}) => {
             className="w-12 h-12 rounded-full object-cover border"
           />
           <div>
-            <div className="font-semibold text-gray-900">{name}</div>
+            <div className="font-semibold text-gray-900">
+              <Link to={`/user/${_id}`}>{name}</Link>
+            </div>
             <div className="text-sm text-gray-500">{email}</div>
           </div>
         </div>

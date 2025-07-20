@@ -1,122 +1,168 @@
-import React, { useState, useEffect } from "react";
-import { deletepost } from "../api/post";
+import React, { useState, useEffect, useRef } from "react";
+import { deletepost, likepost, unlikepost } from "../api/post";
 import { toast } from "react-toastify";
 import { useAuth } from "../api/Authcontext";
-import { likepost, unlikepost, fetchlikes } from "../api/post";
 
-function Adminpost({ post, postdeleted ,checklike}) {
+/**
+ * Instagram-style admin post modal with like/unlike/delete.
+ */
+function Adminpost({ post, postdeleted, checklike }) {
   const { user, token } = useAuth();
   const [open, setOpen] = useState(false);
-  const [currentuserliked, setcurrentuserliked] = useState(false);
+  const [currentUserLiked, setCurrentUserLiked] = useState(false);
   const [liked, setLiked] = useState(0);
+  const [likeLoading, setLikeLoading] = useState(false);
+  const modalRef = useRef();
 
+  // Setup likes info
   useEffect(() => {
-    fetchinglike();
-  }, []);
+    setLiked(post.likes.length);
+    setCurrentUserLiked(post.likes.includes(user.id));
+  }, [post, user]);
 
+  // Handle open modal on ESC key
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
+  // Outside click to close modal
+  useEffect(() => {
+    if (!open) return;
+    function onClick(e) {
+      if (modalRef.current && !modalRef.current.contains(e.target)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  }, [open]);
+
+  // Delete post (with confirm)
   const handleDelete = async () => {
+    const sure = window.confirm("Are you sure you want to delete this post?");
+    if (!sure) return;
     try {
       const res = await deletepost(post.public_id);
       if (res) {
         toast.success(res.message);
+        setOpen(false);
         postdeleted();
       }
     } catch (err) {
-      console.error("Error deleting post:", err);
+      toast.error("Error deleting post!");
     }
   };
 
-  const fetchinglike = () => {
-    const lenght = post.likes.length;
-    setLiked(lenght);
-    if (post.likes.includes(user.id)) {
-      setcurrentuserliked(true);
-    }
-  };
-
-  //like a post
-  const handlelike = async () => {
-    console.log(post.public_id);
-    if (token) {
-      const response = await likepost(post.public_id);
-      if (response.success) {
-        toast.success(response.message);
-        // fetchdata();
-        fetchinglike();
-        checklike();
-      } else {
-        toast.error(response.message);
-      }
-    } else {
-      toast.error("Please login to like");
-    }
-  };
-
-  //unlike a post
-  const handleunlike = async () => {
-    const response = await unlikepost(post.public_id);
+  // Like
+  const handleLike = async () => {
+    if (!token) return toast.error("Please login to like");
+    setLikeLoading(true);
+    const response = await likepost(post.public_id);
     if (response.success) {
-      toast.success(response.message);
-      // fetchdata();
-      fetchinglike();
+      setLiked(liked + 1);
+      setCurrentUserLiked(true);
       checklike();
+      toast.success("Post liked!");
     } else {
       toast.error(response.message);
     }
+    setLikeLoading(false);
   };
 
+  // Unlike
+  const handleUnlike = async () => {
+    setLikeLoading(true);
+    const response = await unlikepost(post.public_id);
+    if (response.success) {
+      setLiked(Math.max(0, liked - 1));
+      setCurrentUserLiked(false);
+      checklike();
+      toast.success("Like removed.");
+    } else {
+      toast.error(response.message);
+    }
+    setLikeLoading(false);
+  };
+
+ 
   return (
     <>
       <div
-        onClick={() => {
-          setOpen(true);
-        }}
-        className="cursor-pointer w-full max-w-[300px] h-[150px] sm:h-[180px] md:h-[200px] lg:h-[220px] bg-white shadow rounded overflow-hidden transition-transform duration-300 hover:scale-105 mx-auto"
+        key={post._id}
+        onClick={() => setOpen(true)}
+        className="cursor-pointer hover:opacity-80 transition"
       >
         <img
           src={post.url}
           alt={post.caption}
-          className="w-full h-full object-cover"
+          className="rounded-lg w-full aspect-square object-cover border"
         />
       </div>
 
       {/* Modal */}
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
-          <div className="bg-white rounded-lg overflow-hidden max-w-md w-full">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80 animate-fadein">
+          <div
+            className="bg-white rounded-xl shadow-xl max-w-sm sm:max-w-md w-[90vw] sm:w-[380px] overflow-hidden flex flex-col"
+            ref={modalRef}
+          >
             <img
               src={post.url}
               alt={post.caption}
-              className="w-full h-72 object-cover"
+              className="w-full h-60 sm:h-72 object-cover border-b"
             />
             <div className="p-4">
-              <h2 className="text-lg font-semibold mb-2">{post.caption}</h2>
-              <div className="flex justify-between mt-4">
-                <p className="text-gray-600">Likes: {liked}</p>
-                {currentuserliked ? (
+              <h2 className="text-lg font-semibold mb-1 break-words">
+                {post.caption}
+              </h2>
+              <div className="flex justify-between items-center my-2 text-gray-600 text-sm">
+                <span>Likes: {liked}</span>
+                <span className="text-xs text-gray-400">
+                  {post.createdAt && new Date(post.createdAt).toLocaleString()}
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-2 mt-4">
+                {currentUserLiked ? (
                   <button
-                    onClick={handleunlike}
-                    className="text-green-600 hover:text-green-800 transition font-semibold"
+                    onClick={handleUnlike}
+                    disabled={likeLoading}
+                    className={`px-4 py-1 rounded-full border flex items-center gap-1 text-pink-600 border-pink-300 bg-pink-50 hover:bg-pink-100 transition font-semibold ${
+                      likeLoading && "opacity-60 pointer-events-none"
+                    }`}
                   >
-                    ❤️ Liked
+                    <span role="img" aria-label="Liked">
+                      ❤️
+                    </span>
+                    Liked
                   </button>
                 ) : (
                   <button
-                    onClick={handlelike}
-                    className="text-red-600 hover:text-red-800 transition font-semibold"
+                    onClick={handleLike}
+                    disabled={likeLoading}
+                    className={`px-4 py-1 rounded-full border flex items-center gap-1 text-gray-700 border-gray-300 bg-gray-50 hover:bg-gray-100 transition font-semibold ${
+                      likeLoading && "opacity-60 pointer-events-none"
+                    }`}
                   >
-                    🤍 Like
+                    <span role="img" aria-label="Like">
+                      🤍
+                    </span>
+                    Like
                   </button>
                 )}
                 <button
                   onClick={handleDelete}
-                  className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                  className="px-4 py-1 bg-red-500 text-white rounded-full hover:bg-red-600 font-semibold transition"
                 >
                   Delete
                 </button>
                 <button
                   onClick={() => setOpen(false)}
-                  className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
+                  className="px-4 py-1 bg-gray-400 text-white rounded-full hover:bg-gray-500 font-semibold transition"
                 >
                   Close
                 </button>
