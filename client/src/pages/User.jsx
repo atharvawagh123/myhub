@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { getuserinfo } from "../api/user";
 import { fetchpostofuser } from "../api/post";
 import Usercard from "../component/Usercard";
+import Adminpost from "../component/Adminpost";
 
 const User = () => {
   const { id } = useParams();
@@ -32,7 +33,6 @@ const User = () => {
   const getpost=async () => {
     try {
       const response = await fetchpostofuser(id);
-      console.log(response);
       setposts(response);
     }catch (error) {
       console.log(error); 
@@ -43,7 +43,12 @@ const User = () => {
   if (error) return <div>{error}</div>;
   if (!user) return <div>User not found.</div>;
 
-  return <Usercard user={user} posts={posts} />;
+  return (
+    <>
+      <Usercard user={user} posts={posts} />
+     
+    </>
+  );
 };
 
 export default User;

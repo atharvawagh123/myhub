@@ -90,6 +90,7 @@ const Post = ({ _id, caption, location, url, public_id, userid }) => {
   };
 
   const handlelike = async () => {
+     console.log("From the feed  ", public_id);
     if (token) {
       const response = await likepost(public_id);
       if (response.success) {
@@ -104,6 +105,7 @@ const Post = ({ _id, caption, location, url, public_id, userid }) => {
   };
 
   const handleunlike = async () => {
+    console.log("From the feed  ",public_id);
     const response = await unlikepost(public_id);
     if (response.success) {
       toast.success(response.message);
