@@ -1,17 +1,34 @@
 import React, { useEffect, useState } from "react";
-import { likepost, unlikepost, fetchlikes } from "../api/post";
+import { likepost, unlikepost, fetchlikes, } from "../api/post";
 import { useAuth } from "../api/Authcontext";
+import { followuser, unfollower, isfollowing } from "../api/user";
 
 const Usercard = ({ user, posts }) => {
   const { user: currentUser } = useAuth();
   const [selectedImg, setSelectedImg] = useState(null);
   const [likeCount, setLikeCount] = useState(0);
   const [userLiked, setUserLiked] = useState(false);
+  const [isfollow, setisfollow] = useState(null);
+
+  useEffect(() => {
+    const checkIsFollowing = async () => {
+      try {
+        const response = await isfollowing(user._id);
+        console.log(response);
+        setisfollow(response.isFollowing); // always set, true or false
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (user?._id) {
+      checkIsFollowing();
+    }
+  }, [user._id]); // only run when user._id changes
 
   const fetchlike = async (id) => {
     try {
       const response = await fetchlikes(id);
-
       setLikeCount(response.length);
       setUserLiked(response.includes(currentUser.id));
     } catch (error) {
@@ -63,6 +80,8 @@ const Usercard = ({ user, posts }) => {
     }
   };
 
+
+  const checkfollow = async (params) => {};
   return (
     <div className="max-w-2xl mx-auto bg-white rounded-xl shadow p-4 sm:p-6 md:p-8">
       {/* Profile header */}
@@ -76,9 +95,16 @@ const Usercard = ({ user, posts }) => {
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-2">
             <h2 className="text-xl sm:text-2xl font-bold">{user.name}</h2>
             {/* Follow Button */}
-            <button className="ml-0 sm:ml-4 mt-2 sm:mt-0 px-5 py-1 bg-blue-500 text-white text-sm font-semibold rounded-full hover:bg-blue-600 transition">
-              Follow
-            </button>
+            {isfollow !== null &&
+              (isfollow ? (
+                <button className="px-5 py-2 bg-blue-700 text-white font-semibold rounded-full hover:bg-blue-800 transition duration-200">
+                  Unfollow
+                </button>
+              ) : (
+                <button className="px-5 py-2 bg-blue-700 text-white font-semibold rounded-full hover:bg-blue-800 transition duration-200">
+                  Follow
+                </button>
+              ))}
           </div>
           <p className="text-gray-500 mb-2 break-words">{user.bio}</p>
           <div className="flex gap-4 text-gray-700 mb-2 text-sm sm:text-base">
