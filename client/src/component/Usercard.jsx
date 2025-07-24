@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { likepost, unlikepost, fetchlikes, } from "../api/post";
 import { useAuth } from "../api/Authcontext";
-import { followuser, unfollower, isfollowing } from "../api/user";
+import { followuser, unfollowuser, isfollowing } from "../api/user";
+import { toast } from "react-toastify";
 
 const Usercard = ({ user, posts }) => {
   const { user: currentUser } = useAuth();
@@ -14,7 +15,6 @@ const Usercard = ({ user, posts }) => {
     const checkIsFollowing = async () => {
       try {
         const response = await isfollowing(user._id);
-        console.log(response);
         setisfollow(response.isFollowing); // always set, true or false
       } catch (error) {
         console.log(error);
@@ -24,7 +24,7 @@ const Usercard = ({ user, posts }) => {
     if (user?._id) {
       checkIsFollowing();
     }
-  }, [user._id]); // only run when user._id changes
+  }, [user._id]); 
 
   const fetchlike = async (id) => {
     try {
@@ -80,6 +80,30 @@ const Usercard = ({ user, posts }) => {
     }
   };
 
+  const handlefollow = async () => {
+    try {
+      const response = await followuser(user._id);
+      if (response) {
+        toast.success(response.message);
+      }
+      console.log(response);
+       setisfollow(true);
+     } catch (error) {
+      console.log(error);
+    }
+  } 
+    const handleunfollow = async () => {
+      try {
+        const response = await unfollowuser(user._id);
+        if (response) {
+          toast.success(response.message);
+        }
+        console.log(response);
+        setisfollow(false);
+      } catch (error) {
+        console.log(error);
+      }
+    }; 
 
   const checkfollow = async (params) => {};
   return (
@@ -97,11 +121,21 @@ const Usercard = ({ user, posts }) => {
             {/* Follow Button */}
             {isfollow !== null &&
               (isfollow ? (
-                <button className="px-5 py-2 bg-blue-700 text-white font-semibold rounded-full hover:bg-blue-800 transition duration-200">
+                <button
+                  onClick={() => {
+                    handleunfollow();
+                  }}
+                  className="px-5 py-2 bg-blue-700 text-white font-semibold rounded-full hover:bg-blue-800 transition duration-200"
+                >
                   Unfollow
                 </button>
               ) : (
-                <button className="px-5 py-2 bg-blue-700 text-white font-semibold rounded-full hover:bg-blue-800 transition duration-200">
+                <button
+                  onClick={() => {
+                    handlefollow();
+                  }}
+                  className="px-5 py-2 bg-blue-700 text-white font-semibold rounded-full hover:bg-blue-800 transition duration-200"
+                >
                   Follow
                 </button>
               ))}
