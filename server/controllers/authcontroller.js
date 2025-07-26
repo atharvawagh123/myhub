@@ -309,50 +309,51 @@ exports.getUserInfo = async (req, res) => {
 
 // Follow user controller
 exports.followUser = async (req, res) => {
-    try {
-        // Clean the ID by removing any whitespace or newline characters
-        const cleanUserId = req.body.id.trim();
+  try {
+    // Clean the ID by removing any whitespace or newline characters
+    const cleanUserId = req.body.id.trim();
 
-        // Log user IDs for debugging
-        console.log("User to follow:", cleanUserId);
-        console.log("Current user:", req.user._id);
+    // Log user IDs for debugging
+    console.log("User to follow:", cleanUserId);
+    console.log("Current user:", req.user._id);
 
-        // Find both users in database
-        const userToFollow = await User.findById(cleanUserId);
-        const currentUser = await User.findById(req.user._id);
-   
+    // Find both users in database
+    const userToFollow = await User.findById(cleanUserId);
+    const currentUser = await User.findById(req.user._id);
 
-        // Validate both users exist
-        if (!userToFollow || !currentUser) {
-            return res.status(404).json({ message: "User not found" });
-        }
-
-        // Prevent user from following themselves
-        if (userToFollow._id.toString() === currentUser._id.toString()) {
-            return res.status(400).json({ message: "You cannot follow yourself" });
-        }
-
-        // Check if already following
-        if (currentUser.following.includes(userToFollow._id)) {
-            return res.status(400).json({ message: "You are already following this user" });
-        }
-
-        // Update current user's following list
-        await User.findByIdAndUpdate(currentUser._id, {
-            $push: { following: userToFollow._id }
-        });
-
-        // Update target user's followers list
-        await User.findByIdAndUpdate(userToFollow._id, {
-            $push: { followers: currentUser._id }
-        });
-
-        // Return success response
-        res.status(200).json({ message: "Successfully followed user" });
-    } catch (err) {
-        // Handle any errors during follow operation
-        res.status(500).json({ message: err.message });
+    // Validate both users exist
+    if (!userToFollow || !currentUser) {
+      return res.status(404).json({ message: "User not found" });
     }
+
+    // Prevent user from following themselves
+    if (userToFollow._id.toString() === currentUser._id.toString()) {
+      return res.status(400).json({ message: "You cannot follow yourself" });
+    }
+
+    // Check if already following
+    if (currentUser.following.includes(userToFollow._id)) {
+      return res
+        .status(400)
+        .json({ message: "You are already following this user" });
+    }
+
+    // Update current user's following list
+    await User.findByIdAndUpdate(currentUser._id, {
+      $push: { following: userToFollow._id },
+    });
+
+    // Update target user's followers list
+    await User.findByIdAndUpdate(userToFollow._id, {
+      $push: { followers: currentUser._id },
+    });
+
+    // Return success response
+    res.status(200).json({ message: "Successfully followed user" });
+  } catch (err) {
+    // Handle any errors during follow operation
+    res.status(500).json({ message: err.message });
+  }
 };
 
 //is following user controller
