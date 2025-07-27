@@ -1,6 +1,7 @@
 import { followuser} from "../api/user";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 const SuggestionCard = ({ profilePicture, name, email ,userid}) => {
 
@@ -30,32 +31,33 @@ const SuggestionCard = ({ profilePicture, name, email ,userid}) => {
           className="w-10 h-10 rounded-full object-cover"
         />
         <div>
-          <p className="text-sm font-medium text-gray-800">{name}</p>
+          <a className="text-sm font-medium text-gray-800">
+            <Link to={`/user/${userid}`}>{name}</Link>
+          </a>
           <p className="text-xs text-gray-500">{email}</p>
         </div>
       </div>
 
-          {/* Follow Button */}
-          {currentuserfollow ? (
-            <button
-            onClick={() => {
-              isfollow(userid);
-            }}
-            className="bg-blue-500 text-white px-4 py-1 rounded-full text-xs font-medium hover:bg-blue-600 transition"
-              >
-                  Following
-            </button>
-          ) : (
-            <button
-                onClick={() => {
-                    isfollow(userid);
-                }}
-                className="bg-blue-500 text-white px-4 py-1 rounded-full text-xs font-medium hover:bg-blue-600 transition"
-                  >
-                      Follow
-            </button>
-          )}
-     
+      {/* Follow Button */}
+      {currentuserfollow ? (
+        <button
+          onClick={() => {
+            isfollow(userid);
+          }}
+          className="bg-blue-500 text-white px-4 py-1 rounded-full text-xs font-medium hover:bg-blue-600 transition"
+        >
+          Following
+        </button>
+      ) : (
+        <button
+          onClick={() => {
+            isfollow(userid);
+          }}
+          className="bg-blue-500 text-white px-4 py-1 rounded-full text-xs font-medium hover:bg-blue-600 transition"
+        >
+          Follow
+        </button>
+      )}
     </div>
   );
 };

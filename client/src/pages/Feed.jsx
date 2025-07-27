@@ -3,6 +3,7 @@ import { fetchPosts, getFollowingPosts } from "../api/post";
 import { getSuggestions } from "../api/user";
 import Post from "../component/Post";
 import SuggestionCard from "../component/SuggestionCard";
+import Link from "react-router-dom"
 
 const Feed = () => {
   const [posts, setPosts] = useState([]);

@@ -70,7 +70,11 @@ const Profile = () => {
   };
 
   // Defensive: Prevent rendering before user is loaded
-  if (!currentuser || !currentuser.name) return <div>Loading...</div>;
+  if (!currentuser || !currentuser.name) return (
+    <div className="flex justify-center items-center h-40">
+      <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  );
 
   return (
     <div>
