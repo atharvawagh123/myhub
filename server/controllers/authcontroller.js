@@ -556,3 +556,26 @@ exports.assignRoomId = async (req, res) => {
     res.status(500).json({ error: "Server error" });
 }
 };
+
+//get suggestion of user
+exports.getSuggestions = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        // Find users who are not the current user and not already followed
+        const suggestions = await User.find({
+            _id: { $ne: user._id, $nin: user.following },
+        }).limit(10); // Limit to 10 suggestions
+        
+        // If no suggestions found, return a message
+        if (suggestions.length === 0) {
+            return res.status(404).json({ message: "No suggestions available" });
+        }
+        res.status(200).json({ suggestions });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: err.message });
+    }
+};

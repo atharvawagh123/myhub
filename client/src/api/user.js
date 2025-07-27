@@ -87,7 +87,17 @@ export const searchuser = async (data) => {
   try {
     const response = await authAxios.get(`/api/auth/search?usertext=${data}`);
     return response.data
-  }catch (error) {
+  } catch (error) {
     console.log(error);
   }
-}
+};
+
+export const getSuggestions = async () => {
+  try {
+    const response = await authAxios.get("/api/auth/suggestions");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching suggestions:", error);
+    return { success: false, message: "Failed to fetch suggestions" };
+  }
+};

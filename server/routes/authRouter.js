@@ -19,6 +19,7 @@ const {
   unlikepost,
   isFollowing,
   getUserInfo,
+  getSuggestions,
 } = require("../controllers/authcontroller");
 const auth = require('../middleware/auth');
 const { upload } = require('../config/cloudinary');
@@ -71,6 +72,9 @@ router.put('/updateuser', auth , upload.single('photo') , updateUser);
 router.get('/search', searchUser);
 
 // Room fo chatting 
-router.post('/room',assignRoomId)
+router.post('/room', assignRoomId)
+
+// get suggestions
+router.get('/suggestions', auth, getSuggestions);
 
 module.exports = router;
