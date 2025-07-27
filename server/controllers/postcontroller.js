@@ -26,10 +26,9 @@ const getFollowingPosts = async (req, res) => {
     // 2️⃣ Get the list of users that current user is following
     const followingUsers = currentUser.following;
 
-    // 3️⃣ Fetch posts where 'postedBy' is in the following list
+    
     const posts = await Post.find({ userid: { $in: followingUsers } })
-      .sort({ createdAt: -1 }) // optional: sort latest first
-      .populate(" userid", "username profilePic") // optional: get details of the poster
+      .sort({ createdAt: -1 }) 
       .exec();
 
     // 4️⃣ Return the posts

@@ -83,3 +83,14 @@ export const fetchpostofuser = async (id) => {
     throw error;
   }
 };
+
+//get posts of users that current user is following
+export const getFollowingPosts = async () => {
+  try {
+    const response = await authAxios.get("/api/post/followingposts");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching following posts:", error);
+    throw error;
+  }
+};

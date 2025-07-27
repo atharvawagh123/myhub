@@ -193,10 +193,6 @@ exports.postImage = async (req, res) => {
 
 // User registration controller
 exports.register = async(req,res)=>{
-    // Log request details for debugging
-    console.log("Content-Type:", req.headers['content-type']);
-    console.log("REQ BODY:", req.body);
-    console.log(req.file?.path);
     // Destructure required fields from request body
     const { name, email, password, role } = req.body;
    
@@ -225,11 +221,11 @@ exports.register = async(req,res)=>{
             role: role || 'user',// Default role is 'user'
         });
 
-        console.log("User registered:", newUser);
+    
 
         // store user in req.user to track which user is currently logged in
         req.user = newUser;
-        console.log("User stored in req.user:", req.user);
+        
 
         // Generate JWT token for authentication
         const token = jwt.sign({ id: newUser._id, role: newUser.role }, process.env.JWT_SECRET, { expiresIn: '7d' });

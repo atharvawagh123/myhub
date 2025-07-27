@@ -86,7 +86,6 @@ const Usercard = ({ user, posts }) => {
       if (response) {
         toast.success(response.message);
       }
-      console.log(response);
        setisfollow(true);
      } catch (error) {
       console.log(error);

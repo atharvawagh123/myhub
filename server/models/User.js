@@ -47,7 +47,7 @@ const userSchema = new mongoose.Schema({
         }],  
         userid: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'User'  // 👈 user se relation ban gaya
+            ref: 'User'  
           },
     }],
     roomIDs: [String] 
