@@ -1,12 +1,15 @@
 const User = require("../models/User");
 const Post = require("../models/post");
 const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
-const {cloudinary} = require('../config/cloudinary');
+const cloudinary = require('../config/cloudinary');
 const Room = require("../models/room");
+const  mailTransporter  = require("../config/mailConfig");
+require("dotenv").config();
 
 
-require('dotenv').config();
+
 
 // fetch post like count
 exports.fetchpostlike = async (req, res) => {
@@ -225,6 +228,23 @@ exports.register = async(req,res)=>{
 
         // store user in req.user to track which user is currently logged in
         req.user = newUser;
+
+        if (req.user) {
+            try {
+                // Send welcome email
+                const mailOptions = {
+                    from: process.env.EMAIL,
+                    to: newUser.email,
+                    subject: "Welcome to MyHub",
+                    text: `Hello ${newUser.name},\n\nThank you for registering on MyHub! We're excited to have you on board.\n\nBest regards,\nMyHub Team`
+                };
+
+                await mailTransporter.sendMail(mailOptions);
+                console.log("Welcome email sent successfully");
+            }catch (error) {
+                console.error("Error sending welcome email:", error);
+            }
+        }
         
 
         // Generate JWT token for authentication
@@ -272,6 +292,87 @@ exports.login = async (req, res) => {
         // Handle any errors during login
         res.status(500).json({ message: err.message });
     }
+};
+
+exports.forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ message: "Email is required." });
+  }
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ message: "User with this email does not exist." });
+    }
+
+    // Generate a reset token
+    const resetToken = crypto.randomBytes(32).toString("hex");
+
+    // Save token & expiry in user doc (15 mins expiry)
+    user.resetToken = resetToken;
+    user.resetTokenExpire = Date.now() + 15 * 60 * 1000; // 15 minutes
+    await user.save();
+
+    // Send reset email
+    const resetUrl = `http://localhost:3000/reset-password/${resetToken}`;
+    const message = `Hi ${user.name},\n\nClick the following link to reset your password:\n${resetUrl}\n\nThis link will expire in 15 minutes.\n\n– MyHub Team`;
+
+      
+    //send password on email
+    const mailOptions = {
+      from: process.env.EMAIL,
+      to: email,
+      subject: "Password Reset Link",
+      text: message,
+    };
+    await mailTransporter.sendMail(mailOptions);
+
+    res.status(200).json({ message: "Reset link sent to your email." });
+  } catch (err) {
+    console.error("Error in forgotPassword:", err);
+    res.status(500).json({ message: "Server error." });
+  }
+};
+
+exports.resetPassword = async (req, res) => {
+  const { token } = req.params;
+  const { newPassword } = req.body;
+
+  if (!newPassword) {
+    return res.status(400).json({ message: "New password is required." });
+  }
+
+  try {
+    const user = await User.findOne({
+      resetToken: token,
+      resetTokenExpire: { $gt: Date.now() }, // Check if token is still valid
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: "Invalid or expired token." });
+    }
+
+    // Hash new password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    // Update password and clear resetToken fields
+    user.password = hashedPassword;
+    user.resetToken = undefined;
+    user.resetTokenExpire = undefined;
+
+    await user.save();
+
+    res.status(200).json({ message: "Password has been reset successfully." });
+  } catch (err) {
+    console.error("Error in resetPassword:", err);
+    res.status(500).json({ message: "Server error." });
+  }
 };
 
 // Get user by name controller

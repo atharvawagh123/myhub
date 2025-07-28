@@ -20,6 +20,8 @@ const {
   isFollowing,
   getUserInfo,
   getSuggestions,
+  forgotPassword,
+  resetPassword,
 } = require("../controllers/authcontroller");
 const auth = require('../middleware/auth');
 const { upload } = require('../config/cloudinary');
@@ -76,5 +78,10 @@ router.post('/room', assignRoomId)
 
 // get suggestions
 router.get('/suggestions', auth, getSuggestions);
+
+// Get user info
+router.post("/forgot-password", forgotPassword);
+
+router.post("/reset-password/:token", resetPassword);
 
 module.exports = router;
