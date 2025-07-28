@@ -332,6 +332,9 @@ exports.forgotPassword = async (req, res) => {
     };
     await mailTransporter.sendMail(mailOptions);
 
+      //redirect to login page
+      
+      
     res.status(200).json({ message: "Reset link sent to your email." });
   } catch (err) {
     console.error("Error in forgotPassword:", err);
