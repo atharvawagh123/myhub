@@ -1,12 +1,12 @@
 import { useAuth } from "../api/Authcontext";
 import { useEffect, useState, useRef } from "react";
-import { getadmin, updateuser } from "../api/user";
+import { getadmin, updateuser,fo } from "../api/user";
 import { postImage } from "../api/post";
 import { toast } from "react-toastify";
 import Adminpost from "../component/Adminpost";
 
 const Profile = () => {
-  const { user } = useAuth();
+  const {  forgotPassword } = useAuth();
   const dialog = useRef();
   const dialog2 = useRef();
   // Fix: initialize as object to prevent null-pointer issues
@@ -69,12 +69,27 @@ const Profile = () => {
     }
   };
 
+  // Handle forgot password
+  const handleForgotPassword = async (email) => {
+    try {
+      const response = await forgotPassword(email);
+      console.log("Forgot password response:", response);
+      if (response) {
+        toast.success(response.message);
+      }
+    } catch (error) {
+      console.error("Error during forgot password:", error);
+      // Handle error (e.g., show an error message to the user)
+    }
+  };
+
   // Defensive: Prevent rendering before user is loaded
-  if (!currentuser || !currentuser.name) return (
-    <div className="flex justify-center items-center h-40">
-      <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-    </div>
-  );
+  if (!currentuser || !currentuser.name)
+    return (
+      <div className="flex justify-center items-center h-40">
+        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
 
   return (
     <div>
@@ -125,6 +140,11 @@ const Profile = () => {
                 className="bg-blue-600 text-white px-4 py-1 rounded-md text-sm hover:bg-blue-700 transition"
               >
                 Post Image
+              </button>
+              <button
+                onClick={() => handleForgotPassword(currentuser.email)}
+                className="bg-red-600 text-white px-4 py-1 rounded-md text-sm hover:bg-red-700 transition">
+                change password
               </button>
             </div>
           </div>

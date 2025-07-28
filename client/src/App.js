@@ -10,6 +10,7 @@ import Feed from "./pages/Feed";
 import Profile from "./pages/Profile";
 import Search from "./pages/Search";
 import UserProfile from "./pages/User";
+import ResetPassword from "./pages/ResetPassword";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
       </Routes>
     </>
   );

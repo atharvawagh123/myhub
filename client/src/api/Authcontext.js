@@ -1,6 +1,12 @@
 // AuthContext.js
 import React, { createContext, useContext , useState} from "react";
-import { register, login, logout } from "./userauth";
+import {
+  register,
+  login,
+  logout,
+  forgotPassword,
+  resetPassword,
+} from "./userauth";
 
 const AuthContext = createContext();
 
@@ -25,6 +31,8 @@ export const AuthProvider = ({ children }) => {
         isLoggedIn,
         setIsLoggedIn,
         user,
+        forgotPassword,
+        resetPassword,
       }}
     >
       {children}

@@ -4,8 +4,10 @@ import { getSuggestions } from "../api/user";
 import Post from "../component/Post";
 import SuggestionCard from "../component/SuggestionCard";
 import Link from "react-router-dom"
+import { useAuth } from "../api/Authcontext";
 
 const Feed = () => {
+  const { user, forgotPassword } = useAuth();
   const [posts, setPosts] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
 
@@ -42,6 +44,7 @@ const Feed = () => {
       console.error("Error fetching suggestions:", error);
     }
   }
+
 
  
 

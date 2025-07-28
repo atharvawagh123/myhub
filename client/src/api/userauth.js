@@ -54,6 +54,24 @@ export const logout = async () => {
     throw error;
   }
 }
+export const forgotPassword = async (email) => {
+  try {
+    const res = await axios.post(`${apiUrl}api/auth/forgot-password`, { email });
+    return res.data;
+  } catch (error) {
+    console.error("Error during forgot password:", error);
+    throw error;
+  }
+}
+export const resetPassword = async (token, newPassword) => {
+  try {
+    const res = await axios.post(`${apiUrl}api/auth/reset-password/${token}`, { newPassword });
+    return res.data;
+  } catch (error) {
+    console.error("Error during reset password:", error);
+    throw error;
+  }
+}
 
 // context provider
 

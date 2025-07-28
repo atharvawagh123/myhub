@@ -19,8 +19,6 @@ const SuggestionCard = ({ profilePicture, name, email ,userid}) => {
         }
     };
 
-    
-
   return (
     <div className="flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-all p-3 rounded-md shadow-sm">
       {/* User info */}
@@ -31,9 +29,13 @@ const SuggestionCard = ({ profilePicture, name, email ,userid}) => {
           className="w-10 h-10 rounded-full object-cover"
         />
         <div>
-          <a className="text-sm font-medium text-gray-800">
-            <Link to={`/user/${userid}`}>{name}</Link>
-          </a>
+          <Link
+            to={`/user/${userid}`}
+            className="text-sm font-medium text-gray-800"
+          >
+            {name}
+          </Link>
+
           <p className="text-xs text-gray-500">{email}</p>
         </div>
       </div>
