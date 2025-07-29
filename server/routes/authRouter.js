@@ -22,6 +22,7 @@ const {
   getSuggestions,
   forgotPassword,
   resetPassword,
+  logoutFromOtherDevices,
 } = require("../controllers/authcontroller");
 const auth = require('../middleware/auth');
 const { upload } = require('../config/cloudinary');
@@ -83,5 +84,8 @@ router.get('/suggestions', auth, getSuggestions);
 router.post("/forgot-password", forgotPassword);
 
 router.post("/reset-password/:token", resetPassword);
+
+//logout form other devices
+router.post('/logout-other', auth, logoutFromOtherDevices);
 
 module.exports = router;

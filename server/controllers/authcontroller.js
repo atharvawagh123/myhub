@@ -283,7 +283,7 @@ exports.login = async (req, res) => {
         console.log("User logged in:", req.user);
 
         // Generate JWT token
-        const token = jwt.sign({ id: user._id, role: user.role },process.env.JWT_SECRET ,{ expiresIn: '7d' });
+        const token = jwt.sign({ id: user._id, role: user.role, tokenversion:user.tokenversion },process.env.JWT_SECRET ,{ expiresIn: '7d' });
 
         // Return success response with user data and token
         res.json({ user: { id: user._id, name: user.name, email: user.email, role: user.role }, token });
@@ -353,30 +353,43 @@ exports.resetPassword = async (req, res) => {
   try {
     const user = await User.findOne({
       resetToken: token,
-      resetTokenExpire: { $gt: Date.now() }, // Check if token is still valid
+      resetTokenExpire: { $gt: Date.now() }, // ✅ Token still valid?
     });
 
     if (!user) {
       return res.status(400).json({ message: "Invalid or expired token." });
     }
 
-    // Hash new password
+    // 🔐 Hash new password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(newPassword, salt);
 
-    // Update password and clear resetToken fields
+    // ✅ Update password, clear resetToken, and increment tokenVersion
     user.password = hashedPassword;
     user.resetToken = undefined;
     user.resetTokenExpire = undefined;
+    user.tokenVersion += 1; // ✅ FIXED typo (was tokenversion)
 
     await user.save();
 
-    res.status(200).json({ message: "Password has been reset successfully." });
+    // ✅ Generate fresh JWT token after password reset
+    const jwttoken = jwt.sign(
+      { userId: user._id, tokenVersion: user.tokenVersion },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    return res.status(200).json({
+      message: "Password has been reset successfully.",
+      token: jwttoken, // ✅ Return as "token" (consistent with frontend)
+    });
   } catch (err) {
     console.error("Error in resetPassword:", err);
-    res.status(500).json({ message: "Server error." });
+    return res.status(500).json({ message: "Server error." });
   }
 };
+
+
 
 // Get user by name controller
 exports.getUser = async (req, res) => {
@@ -682,4 +695,26 @@ exports.getSuggestions = async (req, res) => {
         console.error(err);
         res.status(500).json({ message: err.message });
     }
+};
+
+
+// logout form other devices
+exports.logoutFromOtherDevices = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.tokenVersion += 1; // Invalidate old tokens
+    await user.save();
+
+    return res
+      .status(200)
+      .json({ message: "Logged out from all other devices successfully" });
+  } catch (err) {
+    console.error("Logout error:", err);
+    return res.status(500).json({ message: "Server error" });
+  }
 };

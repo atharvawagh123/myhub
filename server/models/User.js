@@ -60,6 +60,10 @@ const userSchema = new mongoose.Schema(
     ],
     resetToken: String,
     resetTokenExpire: Date,
+    tokenversion: {
+      type: Number,
+      default: 0,
+    },
     roomIDs: [String],
   },
   {
