@@ -11,11 +11,10 @@ const auth = async (req, res, next) => {
 
         const tokenValue = token.replace('Bearer ', '');
         const decoded = jwt.verify(tokenValue, JWT_SECRET);
-        console.log('Decoded Token:', decoded);
+
         
         const user = await User.findById(decoded.id);
         
-        console.log(user.tokenversion);
         // if (!user || user.tokenversion !== decoded.tokenversion) {
         //     return res.status(401).json({ message: 'Invalid token or user not found' });
         // }

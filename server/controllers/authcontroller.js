@@ -280,7 +280,7 @@ exports.login = async (req, res) => {
 
         // Store user in request object for middleware
         req.user = user;
-        console.log("User logged in:", req.user);
+        
 
         // Generate JWT token
         const token = jwt.sign({ id: user._id, role: user.role, tokenversion:user.tokenversion },process.env.JWT_SECRET ,{ expiresIn: '7d' });
@@ -401,7 +401,7 @@ exports.getUser = async (req, res) => {
                 { _id: id }
             ]
         });
-        console.log(user);
+       
         if (!user) return res.status(404).json({ message: 'No user found' });
         return res.json(user);
     } catch (err) {
@@ -427,8 +427,7 @@ exports.followUser = async (req, res) => {
     const cleanUserId = req.body.id.trim();
 
     // Log user IDs for debugging
-    console.log("User to follow:", cleanUserId);
-    console.log("Current user:", req.user._id);
+
 
     // Find both users in database
     const userToFollow = await User.findById(cleanUserId);
@@ -543,7 +542,7 @@ exports.logout = async (req, res) => {
 };
 
 exports.setprofile= async(req,res)=>{
-    console.log(req.file?.path);
+
     try{
         const user = await User.findById(req.user._id);
         if (!user) {
@@ -561,8 +560,7 @@ exports.setprofile= async(req,res)=>{
 //update user details
 exports.updateUser = async (req, res) => {
     try {
-        console.log(req.body);
-        console.log("user ki profile file photo", req.file?.path);
+        
         // Find user by ID
         const user = await User.findById(req.user._id); 
         if(!user){
@@ -585,13 +583,13 @@ exports.updateUser = async (req, res) => {
 // user ko input ke anusar fetch karna hai
 // Controller function
 exports.searchUser = async (req, res) => {
-    console.log(req.query); // Now using query params instead of body
+ // Now using query params instead of body
     try {
         const usertext = req.query.usertext;
         const users = await User.find({
             name: { $regex: usertext, $options: 'i' }
         });
-        console.log(users);
+     
         res.status(200).json({ users });
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -602,10 +600,7 @@ exports.searchUser = async (req, res) => {
 //delete post using public_id
 exports.deletePost = async (req, res) => {
     try {
-       console.log(req.body.public_id);
     const {public_id} = req.body;
-    console.log(public_id);
-  
     const post = await Post.findOne({public_id : public_id});
     if(!post){
         return res.status(404).json({ message: "Post not found" });

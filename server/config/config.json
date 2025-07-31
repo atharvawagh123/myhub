@@ -1,0 +1,9 @@
+{
+    "servers":[
+
+      { "host": "localhost", "port": 4001 },
+      { "host": "localhost", "port": 4002 },
+      {"host": "localhost", "port": 4003}
+
+    ]
+}
