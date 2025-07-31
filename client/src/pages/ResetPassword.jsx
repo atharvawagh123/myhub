@@ -4,7 +4,7 @@ import {useAuth} from "../api/Authcontext";
 
 export default function ResetPassword() {
   const { token } = useParams();
-  const { resetPassword } = useAuth();
+  const { resetPassword , logoutFromOtherDevices} = useAuth();
   const navigate = useNavigate();
   const [newPassword, setNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -18,11 +18,27 @@ export default function ResetPassword() {
     try {
       const res = await resetPassword(token, newPassword);
       console.log("Password reset successful:", res);
+      if (res.token) {
+        console.log("New token received:", res.token);
+        localStorage.setItem("token", res.token); // ✅ store new token
+      }
       if (res) {
         setMessage("Password has been reset successfully.");
-         setTimeout(() => {
-           navigate("/login");
-         }, 2000);
+
+        // i wanted to ask user logout other devices after password reset
+        const result = prompt(
+          "Do you want to log out from other devices? (yes/no)"
+        );
+        if (result && result.toLowerCase() === "yes") {
+          const response = await logoutFromOtherDevices();
+          console.log("Logged out from other devices:", response);
+        }
+        else {
+          // If user chooses not to log out from other devices, redirect to login
+          navigate("/login");
+        }
+
+        
       }
 
      

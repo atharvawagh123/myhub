@@ -73,5 +73,17 @@ export const resetPassword = async (token, newPassword) => {
   }
 }
 
+export const logoutFromOtherDevices = async () => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("No token found");
+
+  const res = await axios.post(
+    "/api/auth/logout-other"
+  );
+
+  return res.data;
+};
+
+
 // context provider
 

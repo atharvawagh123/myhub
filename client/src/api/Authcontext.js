@@ -6,6 +6,7 @@ import {
   logout,
   forgotPassword,
   resetPassword,
+  logoutFromOtherDevices
 } from "./userauth";
 
 const AuthContext = createContext();
@@ -33,6 +34,7 @@ export const AuthProvider = ({ children }) => {
         user,
         forgotPassword,
         resetPassword,
+        logoutFromOtherDevices,
       }}
     >
       {children}

@@ -1,4 +1,4 @@
-// loadbalancer.js
+// load.js
 const http = require("http");
 const RoundRobin = require("./loadbalancer/Roundrobin");
 const serverConfig = require("./config/config.json").servers;

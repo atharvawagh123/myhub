@@ -11,6 +11,7 @@ import Profile from "./pages/Profile";
 import Search from "./pages/Search";
 import UserProfile from "./pages/User";
 import ResetPassword from "./pages/ResetPassword";
+import Forgetpassword from "./pages/Forgetpassword";
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route path="/forget-password" element={<Forgetpassword />} />
       </Routes>
     </>
   );

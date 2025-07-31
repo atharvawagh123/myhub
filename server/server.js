@@ -21,6 +21,7 @@ const server = http.createServer(app);
 app.use(cors());
 
 // Load Balancer Middleware
+//server.js
 app.use("/api/proxy", (req, res) => {
   RoundRobin(servers, req, res);
 });
