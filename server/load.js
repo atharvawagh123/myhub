@@ -1,6 +1,6 @@
 // loadbalancer.js
 const http = require("http");
-const RoundRobin = require("./Roundrobin");
+const RoundRobin = require("./loadbalancer/Roundrobin");
 const serverConfig = require("./config/config.json").servers;
 
 const PORT = 5000; // Port for load balancer

@@ -6,7 +6,7 @@ const dotenv = require("dotenv");
 const authRouter = require('./routes/authRouter');
 const postRouter = require('./routes/postRouter');
 const serverConfig = require("../server/config/config.json").servers;
-const RoundRobin = require("./Roundrobin");
+const RoundRobin = require("./loadbalancer/Roundrobin");
 
 
 dotenv.config();
