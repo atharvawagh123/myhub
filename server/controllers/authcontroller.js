@@ -564,7 +564,7 @@ exports.updateUser = async (req, res) => {
         // Find user by ID
         const user = await User.findById(req.user._id); 
         if(!user){
-            alert("User not found");
+        
             return res.status(404).json({ message: "User not found" });
         }
         // Update user details
