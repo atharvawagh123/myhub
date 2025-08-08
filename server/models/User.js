@@ -56,20 +56,21 @@ const userSchema = new mongoose.Schema(
           type: mongoose.Schema.Types.ObjectId,
           ref: "User",
         },
-         Comments: [
-            {
-              userId: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "User",
-              },
-              comment: String,
-              createdAt: {
-                type: Date,
-                default: Date.now,
-                required: true,
-              },
+        Comments: [
+          {
+            commentid: Number,
+            userId: {
+              type: mongoose.Schema.Types.ObjectId,
+              ref: "User",
             },
-          ],
+            comment: String,
+            createdAt: {
+              type: Date,
+              default: Date.now,
+              required: true,
+            },
+          },
+        ],
       },
     ],
     resetToken: String,
