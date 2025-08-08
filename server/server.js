@@ -5,13 +5,14 @@ const cors = require('cors');
 const dotenv = require("dotenv");
 const authRouter = require('./routes/authRouter');
 const postRouter = require('./routes/postRouter');
+const commentRouter = require('./routes/commentRouter');
 const serverConfig = require("../server/config/config.json").servers;
 const RoundRobin = require("./loadbalancer/Roundrobin");
 
 
 dotenv.config();
 const servers = serverConfig; // ✅ Use directly
-const port = process.argv[2] ||  4000; // Default port if not provided
+const port = process.argv[2] ||  5000; // Default port if not provided
 const app = express();
 
 
@@ -22,9 +23,9 @@ app.use(cors());
 
 // Load Balancer Middleware
 //server.js
-app.use("/api/proxy", (req, res) => {
-  RoundRobin(servers, req, res);
-});
+// app.use("/api/proxy", (req, res) => {
+//   RoundRobin(servers, req, res);
+// });
 
 
 app.use(express.json());
@@ -33,6 +34,7 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use('/api/auth', authRouter);
 app.use('/api/post', postRouter);
+app.use('/api/comment', commentRouter);
 app.get('/', (req, res) => {
   res.send('Welcome to the MyHub API');
 });
