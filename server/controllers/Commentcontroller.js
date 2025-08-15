@@ -2,9 +2,9 @@ const Post = require('../models/post');
 const User = require('../models/User'); 
 const mongoose = require('mongoose');
 
-const GenrateCommentId = () => {
-  return Math.floor(Math.random() * 1000000);
-};
+// const GenrateCommentId = () => {
+//   return Math.floor(Math.random() * 1000000);
+// };
 
 
 exports.addComment = async (req, res) => {
