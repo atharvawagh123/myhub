@@ -129,7 +129,8 @@ const Post = ({ _id, caption, location, url, public_id, userid }) => {
     try {
       const response = await getcomments(_id);
      if(response.success && Array.isArray(response.comments)) {
-        setComments(response.comments);
+       setComments(response.comments);
+       console.log("Fetched comments:", response.comments[0]);
       }
     } catch (error) {
       console.error("Error fetching comments:", error);
@@ -269,25 +270,31 @@ const handleAddComment = async() => {
                 {/* Left: user + comment */}
                 <div className="flex-1 pr-2">
                   <span className="font-semibold text-blue-700">
-                    {comment.user}
+                    {comment.userId?.name || "Anonymous"}:
                   </span>
                   : {comment.comment}
                 </div>
 
                 {/* Right: actions */}
                 <div className="flex gap-2">
-                  <button
-                    className="px-2 py-0.5 text-[11px] sm:text-xs rounded bg-red-100 text-red-600 hover:bg-red-200 transition"
-                    onClick={() => handleDelete(comment._id)}
-                  >
-                    Delete
-                  </button>
-                  <button
-                    className="px-2 py-0.5 text-[11px] sm:text-xs rounded bg-blue-100 text-blue-600 hover:bg-blue-200 transition"
-                    // onClick={() => startEditing(comment)}
-                  >
-                    Edit
-                  </button>
+                  {comment.userId._id === user.id ? (
+                    <>
+                      <button
+                        className="px-2 py-0.5 text-[11px] sm:text-xs rounded bg-red-100 text-red-600 hover:bg-red-200 transition"
+                        onClick={() => handleDelete(comment._id)}
+                      >
+                        Delete
+                      </button>
+                      <button
+                        className="px-2 py-0.5 text-[11px] sm:text-xs rounded bg-blue-100 text-blue-600 hover:bg-blue-200 transition"
+                        // onClick={() => startEditing(comment)}
+                      >
+                        Edit
+                      </button>
+                    </>
+                  ) : (
+                    <></>
+                  )}
                 </div>
               </li>
             ))}
