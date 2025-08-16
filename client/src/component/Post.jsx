@@ -185,7 +185,7 @@ const handleAddComment = async() => {
     }
   };
 
-  const handleEditComment = async ( editCommentText) => {
+  const handleEditComment = async () => {
     if (!editCommentText || editCommentText.trim() === "") {
       toast.error("Comment cannot be empty");
       return;
@@ -369,7 +369,7 @@ const handleAddComment = async() => {
           <div className="flex justify-end gap-2">
             <button
               onClick={() => {
-                handleEditComment(editCommentText);
+                handleEditComment();
                 
               }}
               className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
