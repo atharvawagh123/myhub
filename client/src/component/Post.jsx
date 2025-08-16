@@ -3,12 +3,14 @@ import { likepost, unlikepost, fetchlikes } from "../api/post";
 import { getuser, followuser, unfollowuser, isfollowing } from "../api/user";
 import { toast } from "react-toastify";
 import { useAuth } from "../api/Authcontext";
+import { getcomments , addcomment } from "../api/comment";
 
 const Post = ({ _id, caption, location, url, public_id, userid }) => {
   const { user, token } = useAuth();
   const [liked, setLiked] = useState(0);
   const [currentuserliked, setcurrentuserliked] = useState(false);
   const [currentuserfollow, setcurrentuserfollow] = useState(false);
+  const [comments, setComments] = useState([]);
   const [postowner, setpostowner] = useState({
     profile: "",
     name: "",
@@ -16,11 +18,15 @@ const Post = ({ _id, caption, location, url, public_id, userid }) => {
     followers: [],
     following: [],
   });
+  const [newComment, setNewComment] = useState("");
+
+
   //you can also user backend to fetch likes
   useEffect(() => {
     fetchdata();
     getpostowner();
     isfollow();
+   fetchComments(_id);
   }, [currentuserfollow]);
 
   const isfollow = async () => {
@@ -115,13 +121,57 @@ const Post = ({ _id, caption, location, url, public_id, userid }) => {
     }
   };
 
+  const fetchComments = async (_id) => {
+    if (!_id) {
+      console.error("Post ID is required to fetch comments");
+      return;
+    }
+    try {
+      const response = await getcomments(_id);
+     if(response.success && Array.isArray(response.comments)) {
+        setComments(response.comments);
+      }
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+
+    }
+  }
+  
+  
+const handleAddComment = async() => {
+  if (newComment.trim() === "") return;
+
+  try {
+    const response = await addcomment(_id, newComment);
+    if (response.success) {
+      const {message} = response;
+      toast.success(message);
+      setComments((prevComments) => [
+        ...prevComments,
+        {
+          user: user
+            ? user.name || "Anonymous"
+            : "Anonymous",
+          comment: newComment,
+          _id: response.commentId, // Assuming the response contains the new comment ID
+        },
+      ]);
+      setNewComment("");
+    }
+   } catch (error) {
+    console.error("Error adding comment:", error);
+    
+  }
+ 
+  setNewComment("");
+};
+
   return (
-    <div className="flex flex-col items-start justify-start p-2 xs:p-3 sm:p-4 border rounded-2xl shadow-md mx-1 my-2 sm:m-4 bg-white max-w-full sm:max-w-md w-full">
+    <div className="flex flex-col p-4 sm:p-5 border rounded-2xl shadow-lg hover:shadow-xl transition-shadow bg-white max-w-full sm:max-w-md w-full">
       {/* Header: Profile + Follow/Unfollow */}
-      <div className="flex xs:flex-row items-center xs:items-center justify-between w-full gap-3 xs:gap-8 mb-2">
-        {/* Left: Profile + Info */}
-        <div className="flex items-center gap-2 xs:gap-3">
-          <div className="w-9 h-9 xs:w-10 xs:h-10 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
+      <div className="flex items-center justify-between w-full mb-3">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden bg-gray-200 ring-2 ring-blue-100">
             <img
               src={postowner.profile || "/image.png"}
               alt="Profile"
@@ -129,24 +179,24 @@ const Post = ({ _id, caption, location, url, public_id, userid }) => {
             />
           </div>
           <div className="flex flex-col">
-            <strong className="text-blue-800 text-xs xs:text-sm font-medium">
+            <strong className="text-blue-800 text-sm sm:text-base font-semibold">
               {postowner.name}
             </strong>
-            <p className="text-gray-600 text-[10px] xs:text-xs">{location}</p>
+            <p className="text-gray-500 text-xs sm:text-sm">{location}</p>
           </div>
         </div>
-        {/* Right: Follow Button */}
+
         {currentuserfollow ? (
           <button
             onClick={unfollowhandle}
-            className="text-xs xs:text-sm px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+            className="px-3 py-1 text-xs sm:text-sm rounded-full bg-red-500 text-white hover:bg-red-600 transition"
           >
             Unfollow
           </button>
         ) : (
           <button
             onClick={followhandle}
-            className="text-xs xs:text-sm px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+            className="px-3 py-1 text-xs sm:text-sm rounded-full bg-blue-500 text-white hover:bg-blue-600 transition"
           >
             Follow
           </button>
@@ -154,37 +204,98 @@ const Post = ({ _id, caption, location, url, public_id, userid }) => {
       </div>
 
       {/* Main Image */}
-      <div className="w-full rounded-lg overflow-hidden mb-3">
+      <div className="w-full rounded-xl overflow-hidden mb-3 relative group">
         <img
           src={url}
           alt={caption}
-          className="w-full h-40 xs:h-52 sm:h-60 object-cover transition-transform duration-300 hover:scale-105"
+          className="w-full h-48 sm:h-60 object-cover transition-transform duration-300 group-hover:scale-105"
         />
       </div>
 
       {/* Caption */}
-      <p className="text-gray-700 text-sm xs:text-base mb-3 break-words">
+      <p className="text-gray-700 text-sm sm:text-base mb-3 leading-relaxed break-words">
         {caption}
       </p>
 
-      {/* Like Section */}
-      <div className="w-full flex flex-col xs:flex-row items-start xs:items-center justify-between border-t pt-2 gap-2">
-        <p className="text-xs xs:text-sm text-gray-600">Likes: {liked}</p>
+      {/* Likes */}
+      <div className="border-t pt-3 mb-3 flex items-center justify-between">
+        <p className="text-xs sm:text-sm text-gray-600">❤️ {liked} Likes</p>
         {currentuserliked ? (
           <button
             onClick={handleunlike}
-            className="text-green-600 hover:text-green-800 transition font-semibold text-xs xs:text-sm"
+            className="text-green-600 hover:text-green-800 transition font-semibold text-xs sm:text-sm"
           >
-            ❤️ Liked
+            Liked
           </button>
         ) : (
           <button
             onClick={handlelike}
-            className="text-red-600 hover:text-red-800 transition font-semibold text-xs xs:text-sm"
+            className="text-red-600 hover:text-red-800 transition font-semibold text-xs sm:text-sm"
           >
-            🤍 Like
+            Like
           </button>
         )}
+      </div>
+
+      {/* Comments Section */}
+      <div className="bg-gray-50 rounded-lg p-3 max-h-40 overflow-y-auto mb-2">
+        <p className="text-gray-700 text-xs sm:text-sm font-medium mb-2">
+          Comments:
+        </p>
+
+        {comments.length > 0 ? (
+          <ul className="space-y-2">
+            {comments.map((comment) => (
+              <li
+                key={comment._id}
+                className="flex items-center justify-between text-xs sm:text-sm text-gray-600 border-b last:border-none pb-2"
+              >
+                {/* Left: user + comment */}
+                <div className="flex-1 pr-2">
+                  <span className="font-semibold text-blue-700">
+                    {comment.user}
+                  </span>
+                  : {comment.comment}
+                </div>
+
+                {/* Right: actions */}
+                <div className="flex gap-2">
+                  <button
+                    className="px-2 py-0.5 text-[11px] sm:text-xs rounded bg-red-100 text-red-600 hover:bg-red-200 transition"
+                    // onClick={() => handleDelete(comment._id)}
+                  >
+                    Delete
+                  </button>
+                  <button
+                    className="px-2 py-0.5 text-[11px] sm:text-xs rounded bg-blue-100 text-blue-600 hover:bg-blue-200 transition"
+                    // onClick={() => startEditing(comment)}
+                  >
+                    Edit
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-xs sm:text-sm text-gray-500">No comments yet</p>
+        )}
+      </div>
+
+      {/* Add Comment Box */}
+      <div className="flex items-center gap-2 mt-1">
+        <input
+          type="text"
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+          placeholder="Add a comment..."
+          className="flex-1 border rounded-full px-3 py-1 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+        <button
+          onClick={handleAddComment}
+          className="px-3 py-1 text-xs sm:text-sm bg-blue-500 text-white rounded-full hover:bg-blue-600 transition"
+        >
+          Post
+        </button>
       </div>
     </div>
   );

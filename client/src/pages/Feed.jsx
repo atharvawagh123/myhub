@@ -5,6 +5,7 @@ import Post from "../component/Post";
 import SuggestionCard from "../component/SuggestionCard";
 import Link from "react-router-dom"
 import { useAuth } from "../api/Authcontext";
+import {getcomments} from "../api/comment";
 
 const Feed = () => {
   const { user, forgotPassword } = useAuth();
@@ -14,12 +15,14 @@ const Feed = () => {
   useEffect(() => {
     getPosts();
     getSuggestion();
+
   }, []);
 
    const getPosts = async () => {
      try {
        const data = await fetchPosts();
        setPosts(data.posts); // Make sure this returns an array
+        console.log(data.posts[0]._id);
      } catch (error) {
        console.error("Error fetching posts:", error);
      }
@@ -44,6 +47,7 @@ const Feed = () => {
       console.error("Error fetching suggestions:", error);
     }
   }
+
 
 
  
@@ -74,6 +78,7 @@ const Feed = () => {
           {Array.isArray(posts) &&
             posts.map((post) => (
               <Post
+                id={post._id}
                 key={post._id}
                 _id={post._id}
                 email={post.email}
