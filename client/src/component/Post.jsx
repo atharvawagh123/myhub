@@ -3,7 +3,7 @@ import { likepost, unlikepost, fetchlikes } from "../api/post";
 import { getuser, followuser, unfollowuser, isfollowing } from "../api/user";
 import { toast } from "react-toastify";
 import { useAuth } from "../api/Authcontext";
-import { getcomments , addcomment } from "../api/comment";
+import { getcomments , addcomment ,deletecomment} from "../api/comment";
 
 const Post = ({ _id, caption, location, url, public_id, userid }) => {
   const { user, token } = useAuth();
@@ -166,6 +166,22 @@ const handleAddComment = async() => {
   setNewComment("");
 };
 
+  const handleDelete = async (commentId) => {
+    try {
+      const response = await deletecomment(_id, commentId);
+      if (response.success) {
+        setComments((prevComments) =>
+          prevComments.filter((comment) => comment._id !== commentId)
+        );
+        toast.success("Comment deleted successfully");
+      } else {
+        toast.error("Failed to delete comment");
+      }
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+      toast.error("Error deleting comment");
+    }
+  };
   return (
     <div className="flex flex-col p-4 sm:p-5 border rounded-2xl shadow-lg hover:shadow-xl transition-shadow bg-white max-w-full sm:max-w-md w-full">
       {/* Header: Profile + Follow/Unfollow */}
@@ -262,7 +278,7 @@ const handleAddComment = async() => {
                 <div className="flex gap-2">
                   <button
                     className="px-2 py-0.5 text-[11px] sm:text-xs rounded bg-red-100 text-red-600 hover:bg-red-200 transition"
-                    // onClick={() => handleDelete(comment._id)}
+                    onClick={() => handleDelete(comment._id)}
                   >
                     Delete
                   </button>

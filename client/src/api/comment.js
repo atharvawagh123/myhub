@@ -26,3 +26,16 @@ export const addcomment = async (postid, comment) => {
     throw error;
   }
 }
+
+export const deletecomment = async (postid,commentid) => {
+    try {
+        const response = await authAxios.delete(
+            `/api/comment/posts/${postid}/comments/${commentid}`
+        );
+        console.log("Deleted comment:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("Error deleting comment:", error);
+        throw error;
+    }
+}
