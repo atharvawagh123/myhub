@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState , useRef} from "react";
 import { likepost, unlikepost, fetchlikes } from "../api/post";
 import { getuser, followuser, unfollowuser, isfollowing } from "../api/user";
 import { toast } from "react-toastify";
 import { useAuth } from "../api/Authcontext";
-import { getcomments , addcomment ,deletecomment} from "../api/comment";
+import { getcomments , addcomment ,deletecomment,editcomment} from "../api/comment";
 
 const Post = ({ _id, caption, location, url, public_id, userid }) => {
   const { user, token } = useAuth();
@@ -19,8 +19,9 @@ const Post = ({ _id, caption, location, url, public_id, userid }) => {
     following: [],
   });
   const [newComment, setNewComment] = useState("");
-
-
+  const [commentId, setcommentId] = useState("");
+  const [editCommentText, setEditCommentText] = useState("");
+  const editDialog = useRef(null);
   //you can also user backend to fetch likes
   useEffect(() => {
     fetchdata();
@@ -130,7 +131,7 @@ const Post = ({ _id, caption, location, url, public_id, userid }) => {
       const response = await getcomments(_id);
      if(response.success && Array.isArray(response.comments)) {
        setComments(response.comments);
-       console.log("Fetched comments:", response.comments[0]);
+      //  console.log("Fetched comments:", response.comments[0]);
       }
     } catch (error) {
       console.error("Error fetching comments:", error);
@@ -183,6 +184,32 @@ const handleAddComment = async() => {
       toast.error("Error deleting comment");
     }
   };
+
+  const handleEditComment = async ( editCommentText) => {
+    if (!editCommentText || editCommentText.trim() === "") {
+      toast.error("Comment cannot be empty");
+      return;
+    }
+    try {
+      const response = await editcomment(_id, commentId, editCommentText);
+      if (response.success) {
+        setComments((prevComments) =>
+          prevComments.map((comment) =>
+            comment._id === commentId
+              ? { ...comment, comment: editCommentText }
+              : comment
+          )
+        );
+        toast.success("Comment updated successfully");
+        setcommentId(null);
+        editDialog.current?.close();
+      } 
+    } catch (error) {
+      console.error("Error editing comment:", error);
+      toast.error("Error editing comment");
+    }
+  };
+
   return (
     <div className="flex flex-col p-4 sm:p-5 border rounded-2xl shadow-lg hover:shadow-xl transition-shadow bg-white max-w-full sm:max-w-md w-full">
       {/* Header: Profile + Follow/Unfollow */}
@@ -277,17 +304,21 @@ const handleAddComment = async() => {
 
                 {/* Right: actions */}
                 <div className="flex gap-2">
-                  {comment.userId._id === user.id ? (
+                  {comment?.userId?._id === user?.id ? (
                     <>
                       <button
                         className="px-2 py-0.5 text-[11px] sm:text-xs rounded bg-red-100 text-red-600 hover:bg-red-200 transition"
-                        onClick={() => handleDelete(comment._id)}
+                        onClick={() => handleDelete(comment?._id)}
                       >
                         Delete
                       </button>
                       <button
                         className="px-2 py-0.5 text-[11px] sm:text-xs rounded bg-blue-100 text-blue-600 hover:bg-blue-200 transition"
-                        // onClick={() => startEditing(comment)}
+                        onClick={() => {
+                          setcommentId(comment?._id);
+                          setEditCommentText(comment?.comment); 
+                          editDialog.current?.showModal();
+                        }}
                       >
                         Edit
                       </button>
@@ -317,9 +348,46 @@ const handleAddComment = async() => {
           onClick={handleAddComment}
           className="px-3 py-1 text-xs sm:text-sm bg-blue-500 text-white rounded-full hover:bg-blue-600 transition"
         >
-          Post
+          send
         </button>
       </div>
+
+      <dialog
+        className="bg-white rounded-lg shadow-lg max-w-md w-full p-4"
+        ref={editDialog}
+      >
+        <div className="p-4">
+          <h2 className="text-lg font-semibold mb-2">Edit Comment</h2>
+          <input
+              type="text"
+              value={editCommentText}
+              onChange={(e) => {
+                setEditCommentText(e.target.value);
+            }}
+            className="w-full border rounded px-3 py-1 mb-2"
+          />
+          <div className="flex justify-end gap-2">
+            <button
+              onClick={() => {
+                handleEditComment(editCommentText);
+                
+              }}
+              className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+            >
+              Save
+            </button>
+            <button
+              onClick={() => {
+                setcommentId(null);
+                editDialog.current?.close();
+              }}
+              className="px-3 py-1 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 transition"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </dialog>
     </div>
   );
 };

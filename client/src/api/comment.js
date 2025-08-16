@@ -39,3 +39,17 @@ export const deletecomment = async (postid,commentid) => {
         throw error;
     }
 }
+
+export const editcomment = async (postid, commentid, updatedComment) => {
+    try {
+        const response = await authAxios.put(
+        `/api/comment/posts/${postid}/comments/${commentid}`,
+        { updatedComment }
+        );
+        
+        return response.data;
+    } catch (error) {
+        console.error("Error editing comment:", error);
+        throw error;
+    }
+    }
